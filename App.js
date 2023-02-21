@@ -4,42 +4,46 @@
  *
  * @format
  */
-
+import {NavigationContainer} from '@react-navigation/native';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import SplashScreen from 'react-native-splash-screen';
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  useColorScheme,
-  View,
-} from 'react-native';
 
-import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+import Registration from './Components/Screens/Registration';
+import Restaurants from './Components/Screens/Restaurants';
+import Dishes from './Components/Screens/Dishes';
+import Dish from './Components/Screens/Dish';
+import Login from './Components/Screens/Login';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+  SplashScreen.hide();
+  const Drawer = createDrawerNavigator();
+  const Stack = createNativeStackNavigator();
+  function StackPart() {
+    return (
+      <Stack.Navigator
+        initialRouteName={'Drawer'}
+        screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Drawer" component={DrawerPart} />
+        <Stack.Screen name="Dish" component={Dish} />
+        <Stack.Screen name="Dishes" component={Dishes} />
+      </Stack.Navigator>
+    );
+  }
+  function DrawerPart() {
+    return (
+      <Drawer.Navigator initialRouteName="Login">
+        <Drawer.Screen name="Login" component={Login} />
+        <Drawer.Screen name="Registrations" component={Registration} />
+        <Drawer.Screen name="Restaurants" component={Restaurants} />
+      </Drawer.Navigator>
+    );
+  }
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}
-        />
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <StackPart />
+    </NavigationContainer>
   );
 }
 
