@@ -1,5 +1,6 @@
 import {Button, Text, View} from 'react-native';
 import {useEffect, useState} from 'react';
+import {storeData} from '../StorageHelper';
 
 export default function Login() {
   const [jwt, setJwt] = useState('');
@@ -17,7 +18,9 @@ export default function Login() {
           password: 'bulka123',
         }),
       }).then(async response => {
-        setJwt(await response.text());
+        const data = await response.text();
+        setJwt(data);
+        await storeData('JWT', data);
       });
     } catch (error) {
       console.error(error);
