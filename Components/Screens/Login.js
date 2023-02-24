@@ -1,6 +1,7 @@
 import {Button, Text, View} from 'react-native';
 import {useEffect, useState} from 'react';
 import {storeData} from '../StorageHelper';
+import CookieManager from '@react-native-cookies/cookies';
 
 export default function Login() {
   const [jwt, setJwt] = useState('');
@@ -14,7 +15,7 @@ export default function Login() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          login: 'broniq1',
+          login: 'broniq',
           password: 'bulka123',
         }),
       }).then(async response => {
@@ -27,7 +28,14 @@ export default function Login() {
     }
   }
   async function getUser() {
-    const resp = await fetch('http://10.0.2.2:8082/broniq1/user', {
+    try {
+      CookieManager.get('http://10.0.2.2:8082').then(cookies => {
+        console.log('CookieManager.get =>', cookies);
+      });
+    } catch (error) {
+      console.error(error);
+    }
+    const resp = await fetch('http://10.0.2.2:8082/broniq/user', {
       method: 'GET',
       headers: new Headers({
         Authorization: 'Bearer ' + jwt,
@@ -38,6 +46,7 @@ export default function Login() {
     setJwt(data);
     console.log(data);
   }
+
   return (
     <View>
       <Button onPress={logIn} title={'login as broniq'} />
