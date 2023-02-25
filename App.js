@@ -15,6 +15,7 @@ import Dishes from './Components/Screens/Dishes';
 import Dish from './Components/Screens/Dish';
 import Login from './Components/Screens/Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {COLORS} from './Components/Colors';
 
 function App() {
   SplashScreen.hide();
@@ -24,7 +25,22 @@ function App() {
     return (
       <Stack.Navigator
         initialRouteName={'Drawer'}
-        screenOptions={{headerShown: false}}>
+        screenOptions={{
+          tabBarLabelPosition: 'beside-icon',
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontFamily: 'Ubuntu-Medium',
+            color: COLORS.lightOrangeButton,
+          },
+          tabBarIconStyle: {display: 'none'},
+          tabBarStyle: {
+            backgroundColor: COLORS.mainOrange,
+          },
+          contentStyle: {backgroundColor: 'white'},
+          headerShown: false,
+          backgroundColor: 'white',
+          headerTintColor: COLORS.mainBrown,
+        }}>
         <Stack.Screen name="Drawer" component={DrawerPart} />
         <Stack.Screen name="Dish" component={Dish} />
         <Stack.Screen name="Dishes" component={Dishes} />
@@ -33,7 +49,21 @@ function App() {
   }
   function DrawerPart() {
     return (
-      <Drawer.Navigator initialRouteName="Login">
+      <Drawer.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerPressColor: COLORS.lightOrangeButton,
+          headerShadowVisible: true,
+          headerTintColor: COLORS.mainBrown,
+          drawerActiveBackgroundColor: COLORS.secondOrange,
+          drawerActiveTintColor: COLORS.mainBrown,
+          drawerInactiveTintColor: '#333',
+          drawerLabelStyle: {
+            fontFamily: 'Poppins-Regular',
+            fontSize: 15,
+          },
+          itemStyle: {flex: 1, marginVertical: 5},
+        }}>
         <Drawer.Screen name="Login" component={Login} />
         <Drawer.Screen name="Registrations" component={Registration} />
         <Drawer.Screen name="Restaurants" component={Restaurants} />
