@@ -23,7 +23,7 @@ export default function Registration({navigation}) {
   const [cardNumber, setCardNumber] = useState('');
   const [cvv, setCvv] = useState('');
   const [exDate, setexDate] = useState('');
-
+  const [pageChanged, changePage] = useState(false);
   //Przechodzi do login i czyści fieldy, ewentualnie do zmiany
   const goToLogin = () => {
     navigation.navigate('Login');
@@ -64,78 +64,108 @@ export default function Registration({navigation}) {
       console.error(error);
     }
   }
+  function PageOne() {
+    return (
+      <View>
+        <Text style={styles.textInput}>Login</Text>
+        <TextInput
+          value={login}
+          // placeholder="Login"
+          onChange={setLogin}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Hasło</Text>
+        <TextInput
+          value={password}
+          // placeholder="Password"
+          onChange={setPassword}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Powtórz Hasło</Text>
+        <TextInput
+          value={password}
+          // placeholder="Password"
+          onChange={setPassword}
+          style={styles.input}
+        />
+
+        <TouchableOpacity
+          onPress={() => changePage(true)}
+          style={styles.button}>
+          <Text style={styles.text}>Dalej</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  function PageSecond() {
+    return (
+      <View>
+        <TouchableOpacity
+          onPress={() => changePage(false)}
+          style={styles.button}>
+          <Text style={styles.text}>wstecz</Text>
+        </TouchableOpacity>
+        <Text style={styles.textInput}>Imię</Text>
+        <TextInput
+          value={name}
+          // placeholder="Name"
+          onChange={setName}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Nazwisko</Text>
+        <TextInput
+          value={surname}
+          // placeholder="Surname"
+          onChange={setSurname}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Adres</Text>
+        <TextInput
+          value={address}
+          // placeholder="Address"
+          onChange={setAdress}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Numer karty</Text>
+        <TextInput
+          value={cardNumber}
+          // placeholder="Card Number"
+          onChange={setCardNumber}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Data wygaśnięcia</Text>
+        <TextInput
+          value={exDate}
+          // placeholder="Expire Date"
+          onChange={setexDate}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Kod cvv</Text>
+        <TextInput
+          value={cvv}
+          // placeholder="Cvv"
+          onChange={setCvv}
+          style={styles.input}
+        />
+        <Text style={styles.textInput}>Email</Text>
+        <TextInput
+          value={email}
+          // placeholder="Email"
+          onChange={setEmail}
+          style={styles.input}
+        />
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.text}>Zarejestruj się</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <ScrollView>
       <View style={styles.container}>
         <Image style={styles.logo} source={require('../Screens/logo.jpg')} />
-        <View>
-          <Text style={styles.textInput}>Login</Text>
-          <TextInput
-            value={login}
-            // placeholder="Login"
-            onChange={setLogin}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Hasło</Text>
-          <TextInput
-            value={password}
-            // placeholder="Password"
-            onChange={setPassword}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Imię</Text>
-          <TextInput
-            value={name}
-            // placeholder="Name"
-            onChange={setName}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Nazwisko</Text>
-          <TextInput
-            value={surname}
-            // placeholder="Surname"
-            onChange={setSurname}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Adres</Text>
-          <TextInput
-            value={address}
-            // placeholder="Address"
-            onChange={setAdress}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Numer karty</Text>
-          <TextInput
-            value={cardNumber}
-            // placeholder="Card Number"
-            onChange={setCardNumber}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Data wygaśnięcia</Text>
-          <TextInput
-            value={exDate}
-            // placeholder="Expire Date"
-            onChange={setexDate}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Kod cvv</Text>
-          <TextInput
-            value={cvv}
-            // placeholder="Cvv"
-            onChange={setCvv}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Email</Text>
-          <TextInput
-            value={email}
-            // placeholder="Email"
-            onChange={setEmail}
-            style={styles.input}
-          />
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.text}>Zarejestruj się</Text>
-        </TouchableOpacity>
+        {pageChanged ? <PageSecond /> : <PageOne />}
+
         <TouchableOpacity style={styles.login}>
           <Text style={styles.register} onPress={goToLogin}>
             Masz już konto? Zaloguj się.
