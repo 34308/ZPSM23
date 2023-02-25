@@ -60,18 +60,20 @@ export default function Login({navigation}) {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image style={styles.logo} source={require('../Screens/logo.jpg')} />
+        <Text style={styles.textInput}>Login</Text>
         <TextInput
           style={styles.input}
           onChangeText={setLogin}
           value={login}
-          placeholder="Login"
+          // placeholder="Login"
           keyboardType="default"
         />
+        <Text style={styles.textInput}>Hasło</Text>
         <TextInput
           style={styles.input}
           onChangeText={setPassword}
           value={password}
-          placeholder="Hasło"
+          // placeholder="Hasło"
           keyboardType="default"
           secureTextEntry={true}
         />
@@ -101,7 +103,7 @@ const styles = StyleSheet.create({
   },
   button: {
     justifyContent: 'center',
-    borderWidth: 1,
+    borderBottomWidth: 1,
     padding: 10,
     margin: 20,
     borderRadius: 5,
@@ -112,11 +114,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
   },
+  textInput: {
+    fontSize: 16,
+    textAlign: 'left',
+    color: COLORS.mainOrange,
+    marginTop: 20,
+  },
   input: {
-    padding: 10,
+    padding: 5,
     paddingLeft: 15,
-    margin: 10,
-    borderWidth: 1,
+    marginBottom: 10,
+    borderBottomWidth: 2,
     borderRadius: 5,
     borderColor: COLORS.lightOrangeButton,
     textAlign: 'left',
