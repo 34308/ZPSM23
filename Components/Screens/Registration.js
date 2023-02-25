@@ -11,7 +11,6 @@ import {
 import {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../Colors';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export default function Registration({navigation}) {
   const [login, setLogin] = useState('');
@@ -160,11 +159,10 @@ const styles = StyleSheet.create({
   },
   button: {
     justifyContent: 'center',
-    borderWidth: 2,
+    // borderWidth: 2,
     padding: 10,
     margin: 20,
     borderRadius: 5,
-    borderColor: COLORS.thirdOrange,
     backgroundColor: COLORS.mainOrange,
     width: 250,
     marginBottom: 10,
@@ -185,7 +183,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     width: 250,
     height: 150,
-    marginBottom: 20,
+    marginBottom: 0,
     marginTop: 20,
   },
   input: {
@@ -197,7 +195,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.lightOrangeButton,
     textAlign: 'left',
     color: COLORS.mainBrown,
-    width: 300,
+    width: 320,
   },
   login: {
     textAlign: 'center',

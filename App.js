@@ -4,7 +4,7 @@
  *
  * @format
  */
-import {NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import SplashScreen from 'react-native-splash-screen';
 import React from 'react';
@@ -16,6 +16,20 @@ import Dish from './Components/Screens/Dish';
 import Login from './Components/Screens/Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {COLORS} from './Components/Colors';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const MainTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: COLORS.mainOrange,
+    background: COLORS.lightOrangeButton,
+    card: COLORS.mainBrown,
+    text: 'white',
+    border: 'black',
+    // notification: 'rgb(255, 69, 58)',
+  },
+};
 
 function App() {
   SplashScreen.hide();
@@ -64,7 +78,20 @@ function App() {
           },
           itemStyle: {flex: 1, marginVertical: 5},
         }}>
-        <Drawer.Screen name="Login" component={Login} />
+        <Drawer.Screen
+          name="Login"
+          component={Login}
+          options={{
+            title: 'Home',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="home"
+                size={size}
+                color={focused ? COLORS.mainBrown : '#ccc'}
+              />
+            ),
+          }}
+        />
         <Drawer.Screen name="Registrations" component={Registration} />
         <Drawer.Screen name="Restaurants" component={Restaurants} />
       </Drawer.Navigator>
