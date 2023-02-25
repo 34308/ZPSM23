@@ -5,7 +5,6 @@ import CookieManager from '@react-native-cookies/cookies';
 
 export default function Login() {
   const [jwt, setJwt] = useState('');
-
   async function logIn() {
     try {
       fetch('http://10.0.2.2:8082/user/login', {
@@ -15,27 +14,31 @@ export default function Login() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          login: 'broniq',
+          login: 'broniq1',
           password: 'bulka123',
         }),
       }).then(async response => {
         const data = await response.text();
-        setJwt(data);
-        await storeData('JWT', data);
+        setJwt(JSON.parse(data).value);
+        CookieManager.set('http://10.0.2.2:8082', {
+          name: 'JWT',
+          value: JSON.parse(data).value,
+          domain: JSON.parse(data).domain,
+          path: JSON.parse(data).path,
+          version: JSON.parse(data).version,
+          expires: JSON.parse(data).expires,
+        });
       });
     } catch (error) {
       console.error(error);
     }
   }
+
   async function getUser() {
-    try {
-      CookieManager.get('http://10.0.2.2:8082').then(cookies => {
-        console.log('CookieManager.get =>', cookies);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-    const resp = await fetch('http://10.0.2.2:8082/broniq/user', {
+    CookieManager.get('http://10.0.2.2:8082').then(cookies => {
+      console.log('CookieManager.get =>', cookies.JWT.value);
+    });
+    const resp = await fetch('http://10.0.2.2:8082/broniq1/user', {
       method: 'GET',
       headers: new Headers({
         Authorization: 'Bearer ' + jwt,
