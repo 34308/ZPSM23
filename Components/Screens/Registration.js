@@ -88,7 +88,13 @@ export default function Registration({navigation}) {
           onChange={setPassword}
           style={styles.input}
         />
-
+        <Text style={styles.textInput}>Email</Text>
+        <TextInput
+          value={email}
+          // placeholder="Email"
+          onChange={setEmail}
+          style={styles.input}
+        />
         <TouchableOpacity
           onPress={() => changePage(true)}
           style={styles.button}>
@@ -147,13 +153,7 @@ export default function Registration({navigation}) {
           onChange={setCvv}
           style={styles.input}
         />
-        <Text style={styles.textInput}>Email</Text>
-        <TextInput
-          value={email}
-          // placeholder="Email"
-          onChange={setEmail}
-          style={styles.input}
-        />
+
         <TouchableOpacity style={styles.button}>
           <Text style={styles.text}>Zarejestruj się</Text>
         </TouchableOpacity>
