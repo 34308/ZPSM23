@@ -3,14 +3,18 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
-  ScrollView, Image,
+  ScrollView,
+  Image, Dimensions,
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import {COLORS} from '../Colors';
 
-export default function Restaurants() {
-  const [restaurants, setRestaurants] = useState([]);
+const dimensions = Dimensions.get('window');
+const imageHeight = Math.round((dimensions.width * 9) / 16);
+const imageWidth = dimensions.width;
 
+export default function Restaurants({navigation}) {
+  const [restaurants, setRestaurants] = useState([]);
   // const fetchData = async () => {
   //   try {
   //     const resp = await fetch('http://10.0.2.2:8082/restaurants');
@@ -22,6 +26,14 @@ export default function Restaurants() {
   //   }
   // };
 
+  function goToRestaurant(restaurantName) {
+    console.log('Restaurant navigate: ' + restaurantName);
+    navigation.navigate('Dishes', {
+      restaurantName: restaurantName + '/dishes?p=1',
+    });
+  }
+
+  //Restauracja%20u%20Jana
   useEffect(() => {
     const url = 'http://10.0.2.2:8082/restaurants';
     const fetchData = async () => {
@@ -45,28 +57,36 @@ export default function Restaurants() {
           return (
             <View
               key={i + item.name + item.restaurantsId}
-              style={{
-                justifyContent: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                alignContent: 'center',
-                height: 125,
-                borderWidth: 1,
-                borderRadius: 5,
-                borderColor: COLORS.mainOrange,
-                backgroundColor: COLORS.secondOrange,
-                padding: 30,
-                margin: 20,
-              }}>
-              <Text style={styles.text} key={item.name + i}>
-                {item.name}
-              </Text>
-              {/*<Image*/}
-              {/*  style={{width: '100%', height: '50%'}}*/}
-              {/*  source={{uri: restaurants.imageUrl}}*/}
-              {/*/>*/}
+              style={styles.imageContainer}>
+              <TouchableOpacity onPress={() => goToRestaurant(item.name)}>
+                <Image
+                    style={styles.image}
+                    source={{uri: item.imageUrl}}
+                />
+                {/*<Text style={styles.text} key={item.name + i}>*/}
+                {/*  {item.name}*/}
+                {/*</Text>*/}
+                {/*<Image*/}
+                {/*  style={styles.image}*/}
+                {/*  // style={{*/}
+                {/*  //   width: null,*/}
+                {/*  //   height: null,*/}
+                {/*  //   flex: 1,*/}
+                {/*  //   borderRadius: 15,*/}
+                {/*  //   alignSelf: 'center', //add this*/}
+                {/*  //   // flex: 1,*/}
+                {/*  //   // // resizeMode: 'cover',*/}
+                {/*  //   // width: 350,*/}
+                {/*  //   // height: 400,*/}
+                {/*  //   // padding: 30,*/}
+                {/*  //   // width: "100%",*/}
+                {/*  //   // height: 350,*/}
+                {/*  //   // resizeMode: 'cover',*/}
+                {/*  //   // margin: -20,*/}
+                {/*  // }}*/}
+                {/*  source={{uri: item.imageUrl}}*/}
+                {/*/>*/}
+              </TouchableOpacity>
             </View>
           );
         })}
@@ -77,9 +97,10 @@ export default function Restaurants() {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'flex-start',
+    flex: 1,
+    justifyContent: 'center',
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
@@ -90,5 +111,32 @@ const styles = StyleSheet.create({
     fontFamily: 'Ubuntu-Light',
     fontSize: 26,
     textAlign: 'center',
+  },
+  imageContainer: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    alignContent: 'center',
+    width: imageWidth/1.5,
+    height: imageHeight/1.5,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: COLORS.mainOrange,
+    backgroundColor: COLORS.secondOrange,
+    margin: 20,
+  },
+  image: {
+    // flex: 1,
+    // resizeMode: 'contain',
+    // flex: 1,
+    width: imageWidth/1.5,
+    height: imageHeight/1.5,
+    resizeMode: 'contain',
+    borderRadius: 5,
+    borderColor: COLORS.mainBrown,
+    borderWidth: 1,
+    margin: 20,
   },
 });
