@@ -63,6 +63,7 @@ export default function Restaurants({navigation}) {
                     style={styles.image}
                     source={{uri: item.imageUrl}}
                 />
+                <View style={styles.line}></View>
                 {/*<Text style={styles.text} key={item.name + i}>*/}
                 {/*  {item.name}*/}
                 {/*</Text>*/}
@@ -121,16 +122,13 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     width: imageWidth/1.5,
     height: imageHeight/1.5,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderRadius: 5,
-    borderColor: COLORS.mainOrange,
-    backgroundColor: COLORS.secondOrange,
-    margin: 20,
+    // borderColor: COLORS.mainOrange,
+    // backgroundColor: COLORS.secondOrange,
+    margin: 30,
   },
   image: {
-    // flex: 1,
-    // resizeMode: 'contain',
-    // flex: 1,
     width: imageWidth/1.5,
     height: imageHeight/1.5,
     resizeMode: 'contain',
@@ -138,5 +136,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.mainBrown,
     borderWidth: 1,
     margin: 20,
+  },
+  line: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderColor: COLORS.mainBrown,
   },
 });

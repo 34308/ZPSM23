@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 5,
     borderColor: COLORS.thirdOrange,
-    backgroundColor: COLORS.mainOrange,
+    backgroundColor: COLORS.mainBrown,
   },
   text: {
     textAlign: 'center',
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 16,
     textAlign: 'left',
-    color: COLORS.mainOrange,
+    color: COLORS.mainBrown,
     marginTop: 20,
   },
   input: {
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 2,
     borderRadius: 5,
-    borderColor: COLORS.lightOrangeButton,
+    borderColor: COLORS.mainBrown,
     textAlign: 'left',
     color: COLORS.mainBrown,
   },

@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 20,
     borderRadius: 5,
-    backgroundColor: COLORS.mainOrange,
+    backgroundColor: COLORS.mainBrown,
     width: 250,
     marginBottom: 10,
   },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 16,
     textAlign: 'left',
-    color: COLORS.mainOrange,
+    color: COLORS.mainBrown,
     marginTop: 20,
   },
   logo: {
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 2,
     borderRadius: 5,
-    borderColor: COLORS.lightOrangeButton,
+    borderColor: COLORS.mainBrown,
     textAlign: 'left',
     color: COLORS.mainBrown,
     width: 320,
