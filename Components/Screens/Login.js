@@ -22,6 +22,20 @@ export default function Login({navigation}) {
     setPassword('');
   };
 
+  const ValidateFields = async () => {
+    if (login == '' || password == '' || login == null || password == null) {
+      alert('Uzupełnij wszystkie pola.');
+    } else {
+      try {
+        // await Register();
+        alert('User added.');
+        //GoToUserInterface()
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   async function logIn() {
     try {
       fetch('http://10.0.2.2:8082/user/login', {
@@ -77,7 +91,7 @@ export default function Login({navigation}) {
           keyboardType="default"
           secureTextEntry={true}
         />
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={ValidateFields}>
           <Text style={styles.text}>Zaloguj się</Text>
         </TouchableOpacity>
         <TouchableOpacity>

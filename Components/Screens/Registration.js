@@ -25,7 +25,7 @@ export default function Registration({navigation}) {
   const [exDate, setexDate] = useState('');
   const [pageChanged, changePage] = useState(false);
   //Przechodzi do login i czyści fieldy, ewentualnie do zmiany
-  const goToLogin = () => {
+  const GoToLogin = () => {
     navigation.navigate('Login');
     setLogin('');
     setPassword('');
@@ -36,6 +36,48 @@ export default function Registration({navigation}) {
     setCardNumber('');
     setCvv('');
     setexDate('');
+  };
+
+  //Waliduje poprawność wprowadzanych danych oraz sprawdza czy wymagane dane zostały wprowadzone
+  const ValidateFields = async () => {
+    if (
+      login == '' ||
+      password == '' ||
+      passwordRepeat == '' ||
+      email == '' ||
+      name == '' ||
+      surname == '' ||
+      address == '' ||
+      email == '' ||
+      cardNumber == '' ||
+      cvv == '' ||
+      exDate == '' ||
+      login == null ||
+      password == null ||
+      passwordRepeat == null ||
+      email == null ||
+      name == null ||
+      surname == null ||
+      address == null ||
+      email == null ||
+      cardNumber == null ||
+      cvv == null ||
+      exDate == null
+    ) {
+      alert('Uzupełnij wszystkie pola.');
+    } else if (password.length < 8 || password.length > 20) {
+      alert('Hasło musi zawierać min. 8 znaków i max. 20');
+    } else if (passwordRepeat != password) {
+      alert('Hasła się nie zgadzają.');
+    } else {
+      try {
+        // await Register();
+        alert('User added.');
+        GoToLogin();
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   async function Register() {
@@ -66,35 +108,37 @@ export default function Registration({navigation}) {
   }
   function PageOne() {
     return (
-      <View>
-        <Text style={styles.textInput}>Login</Text>
-        <TextInput
-          value={login}
-          // placeholder="Login"
-          onChange={setLogin}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Hasło</Text>
-        <TextInput
-          value={password}
-          // placeholder="Password"
-          onChange={setPassword}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Powtórz Hasło</Text>
-        <TextInput
-          value={password}
-          // placeholder="Password"
-          onChange={setPassword}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Email</Text>
-        <TextInput
-          value={email}
-          // placeholder="Email"
-          onChange={setEmail}
-          style={styles.input}
-        />
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.textInput}>Login</Text>
+          <TextInput
+            value={login}
+            // placeholder="Login"
+            onChangeText={setLogin}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Hasło</Text>
+          <TextInput
+            value={password}
+            // placeholder="Password"
+            onChangeText={setPassword}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Powtórz Hasło</Text>
+          <TextInput
+            value={password}
+            // placeholder="Password"
+            onChangeText={setPassword}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Email</Text>
+          <TextInput
+            value={email}
+            // placeholder="Email"
+            onChangeText={setEmail}
+            style={styles.input}
+          />
+        </View>
         <TouchableOpacity
           onPress={() => changePage(true)}
           style={styles.button}>
@@ -105,56 +149,57 @@ export default function Registration({navigation}) {
   }
   function PageSecond() {
     return (
-      <View>
+      <View style={styles.container}>
         <TouchableOpacity
           onPress={() => changePage(false)}
           style={styles.button}>
-          <Text style={styles.text}>wstecz</Text>
+          <Text style={styles.text}>Wstecz</Text>
         </TouchableOpacity>
-        <Text style={styles.textInput}>Imię</Text>
-        <TextInput
-          value={name}
-          // placeholder="Name"
-          onChange={setName}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Nazwisko</Text>
-        <TextInput
-          value={surname}
-          // placeholder="Surname"
-          onChange={setSurname}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Adres</Text>
-        <TextInput
-          value={address}
-          // placeholder="Address"
-          onChange={setAdress}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Numer karty</Text>
-        <TextInput
-          value={cardNumber}
-          // placeholder="Card Number"
-          onChange={setCardNumber}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Data wygaśnięcia</Text>
-        <TextInput
-          value={exDate}
-          // placeholder="Expire Date"
-          onChange={setexDate}
-          style={styles.input}
-        />
-        <Text style={styles.textInput}>Kod cvv</Text>
-        <TextInput
-          value={cvv}
-          // placeholder="Cvv"
-          onChange={setCvv}
-          style={styles.input}
-        />
-
-        <TouchableOpacity style={styles.button}>
+        <View>
+          <Text style={styles.textInput}>Imię</Text>
+          <TextInput
+            value={name}
+            // placeholder="Name"
+            onChangeText={setName}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Nazwisko</Text>
+          <TextInput
+            value={surname}
+            // placeholder="Surname"
+            onChangeText={setSurname}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Adres</Text>
+          <TextInput
+            value={address}
+            // placeholder="Address"
+            onChangeText={setAdress}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Numer karty</Text>
+          <TextInput
+            value={cardNumber}
+            // placeholder="Card Number"
+            onChangeText={setCardNumber}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Data wygaśnięcia</Text>
+          <TextInput
+            value={exDate}
+            // placeholder="Expire Date"
+            onChangeText={setexDate}
+            style={styles.input}
+          />
+          <Text style={styles.textInput}>Kod cvv</Text>
+          <TextInput
+            value={cvv}
+            // placeholder="Cvv"
+            onChangeText={setCvv}
+            style={styles.input}
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={ValidateFields}>
           <Text style={styles.text}>Zarejestruj się</Text>
         </TouchableOpacity>
       </View>
@@ -162,15 +207,19 @@ export default function Registration({navigation}) {
   }
   return (
     <ScrollView>
-      <View style={styles.container}>
-        <Image style={styles.logo} source={require('../Screens/logo.jpg')} />
+      <View>
+        <View style={styles.container}>
+          <Image style={styles.logo} source={require('../Screens/logo.jpg')} />
+        </View>
         {pageChanged ? <PageSecond /> : <PageOne />}
 
-        <TouchableOpacity style={styles.login}>
-          <Text style={styles.register} onPress={goToLogin}>
-            Masz już konto? Zaloguj się.
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.login}>
+            <Text style={styles.register} onPress={GoToLogin}>
+              Masz już konto? Zaloguj się.
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -208,9 +257,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   logo: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // alignContent: 'center',
     width: 250,
     height: 150,
     marginBottom: 0,

@@ -5,7 +5,7 @@
  * @format
  */
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import {createDrawerNavigator, DrawerContent} from '@react-navigation/drawer';
 import SplashScreen from 'react-native-splash-screen';
 import React from 'react';
 
@@ -17,6 +17,7 @@ import Login from './Components/Screens/Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {COLORS} from './Components/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {Image} from 'react-native';
 
 const MainTheme = {
   ...DefaultTheme,
@@ -78,11 +79,10 @@ function App() {
           },
           itemStyle: {flex: 1, marginVertical: 5},
         }}>
+        {/*<Image source={require('./images/logo.jpg')} />*/}
         <Drawer.Screen
-          name="Login"
-          component={Login}
           options={{
-            title: 'Home',
+            title: 'Restauracje',
             drawerIcon: ({focused, size}) => (
               <Icon
                 name="home"
@@ -91,9 +91,37 @@ function App() {
               />
             ),
           }}
+          name="Restaurants"
+          component={Restaurants}
         />
-        <Drawer.Screen name="Registrations" component={Registration} />
-        <Drawer.Screen name="Restaurants" component={Restaurants} />
+        <Drawer.Screen
+          name="Login"
+          component={Login}
+          options={{
+            title: 'Zaloguj się',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="user-circle-o"
+                size={size}
+                color={focused ? COLORS.mainBrown : '#ccc'}
+              />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          options={{
+            title: 'Utwórz konto',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="user-plus"
+                size={size - 2}
+                color={focused ? COLORS.mainBrown : '#ccc'}
+              />
+            ),
+          }}
+          name="Registrations"
+          component={Registration}
+        />
       </Drawer.Navigator>
     );
   }
