@@ -2,7 +2,7 @@ import {View} from 'react-native';
 import {useState} from 'react';
 import {getData, storeData} from '../StorageHelper';
 
-export default function CartItems() {
+export default function Checkout() {
   const [currentUser, setCurrentUser] = useState('');
   const [numberOfProduct, setNumberOfProduct] = useState('');
   const [dishes, setDishes] = useState('');
