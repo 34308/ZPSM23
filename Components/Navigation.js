@@ -21,6 +21,7 @@ import {LOGIN, LOGOUT} from './actions';
 import {Provider as StoreProvider, useDispatch} from 'react-redux';
 import store from './Screens/store';
 import {COLORS} from './Colors';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function Navigation() {
   const Drawer = createDrawerNavigator();
@@ -70,6 +71,8 @@ function Navigation() {
             alignItems: 'center',
             alignContent: 'center',
             marginLeft: 85,
+            marginBottom: 20,
+            marginTop: 10,
           }}
           source={require('./Screens/logo.png')}
         />
@@ -105,12 +108,64 @@ function Navigation() {
         }}
         initialRouteName="Login"
         drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Login" component={Login} />
-        <Drawer.Screen name="Restaurants" component={Restaurants} />
+        <Drawer.Screen
+          options={{
+            title: 'Zaloguj się',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="user-circle-o"
+                size={size - 3}
+                color={focused ? COLORS.mainBrown : '#ccc'}
+              />
+            ),
+          }}
+          name="Login"
+          component={Login}
+        />
+        <Drawer.Screen
+          options={{
+            title: 'Restauracje',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="home"
+                size={size - 2}
+                color={focused ? COLORS.mainBrown : '#ccc'}
+              />
+            ),
+          }}
+          name="Restaurants"
+          component={Restaurants}
+        />
         {store.getState() ? (
-          <Drawer.Screen name="Checkout" component={Checkout} />
+          <Drawer.Screen
+            options={{
+              title: 'Koszyk',
+              drawerIcon: ({focused, size}) => (
+                <Icon
+                  name="shopping-cart"
+                  size={size - 2}
+                  color={focused ? COLORS.mainBrown : '#ccc'}
+                />
+              ),
+            }}
+            name="Checkout"
+            component={Checkout}
+          />
         ) : (
-          <Drawer.Screen name="Registrations" component={Registration} />
+          <Drawer.Screen
+            options={{
+              title: 'Utwórz konto',
+              drawerIcon: ({focused, size}) => (
+                <Icon
+                  name="user-plus"
+                  size={size - 4}
+                  color={focused ? COLORS.mainBrown : '#ccc'}
+                />
+              ),
+            }}
+            name="Registrations"
+            component={Registration}
+          />
         )}
       </Drawer.Navigator>
     );
