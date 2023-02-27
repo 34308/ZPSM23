@@ -2,11 +2,20 @@ import {Button, Text, View} from 'react-native';
 import {useEffect, useState} from 'react';
 import {storeData} from '../StorageHelper';
 
+import {useReducer} from 'react';
+import {LOGIN} from '../actions';
+import {useDispatch} from 'react-redux';
+import store from './store';
 export default function Login() {
   const [jwt, setJwt] = useState('');
+  const dispatch = useDispatch();
 
   async function logIn() {
     try {
+      dispatch({
+        type: LOGIN,
+        payload: true,
+      });
       fetch('http://10.0.2.2:8082/user/login', {
         method: 'POST',
         headers: {
@@ -36,7 +45,6 @@ export default function Login() {
     });
     const data = await resp.text();
     setJwt(data);
-    console.log(data);
   }
   return (
     <View>
