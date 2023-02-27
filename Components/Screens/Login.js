@@ -10,12 +10,14 @@ import {
 import {useEffect, useState} from 'react';
 import {storeData} from '../StorageHelper';
 import {COLORS} from '../Colors';
+import {useDispatch} from 'react-redux';
+import {LOGIN} from '../actions';
 
 export default function Login({navigation}) {
   const [jwt, setJwt] = useState('');
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-
+  const dispatch = useDispatch();
   const goToRegister = () => {
     navigation.navigate('Registrations');
     setLogin('');
@@ -27,7 +29,7 @@ export default function Login({navigation}) {
       alert('Uzupełnij wszystkie pola.');
     } else {
       try {
-        // await Register();
+        logIn();
         alert('User added.');
         //GoToUserInterface()
       } catch (error) {
@@ -45,12 +47,13 @@ export default function Login({navigation}) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          login: 'broniq1',
-          password: 'bulka123',
+          login: '' + login,
+          password: '' + password,
         }),
       }).then(async response => {
         const data = await response.text();
         setJwt(data);
+        dispatch({type: LOGIN, payload: true});
         await storeData('JWT', data);
       });
     } catch (error) {

@@ -20,22 +20,34 @@ import {loginReducer} from './Reducer';
 import {LOGIN, LOGOUT} from './actions';
 import {Provider as StoreProvider, useDispatch} from 'react-redux';
 import store from './Screens/store';
+import {COLORS} from './Colors';
 
 function Navigation() {
   const Drawer = createDrawerNavigator();
   let interval;
   const dispatch = useDispatch();
   const Stack = createNativeStackNavigator();
-  useEffect(() => {
-    interval = setInterval(() => {
-      console.log('check if logged', store.getState());
-    }, 1000);
-  }, []);
+  useEffect(() => {}, []);
   function StackPart() {
     return (
       <Stack.Navigator
         initialRouteName={'Drawer'}
-        screenOptions={{headerShown: false}}>
+        screenOptions={{
+          tabBarLabelPosition: 'beside-icon',
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontFamily: 'Ubuntu-Medium',
+            color: COLORS.lightOrangeButton,
+          },
+          tabBarIconStyle: {display: 'none'},
+          tabBarStyle: {
+            backgroundColor: COLORS.mainOrange,
+          },
+          contentStyle: {backgroundColor: 'white'},
+          headerShown: false,
+          backgroundColor: 'white',
+          headerTintColor: COLORS.mainBrown,
+        }}>
         <Stack.Screen name="Drawer" component={DrawerPart} />
         <Stack.Screen name="Dish" component={Dish} />
         <Stack.Screen name="Dishes" component={Dishes} />
@@ -52,7 +64,9 @@ function Navigation() {
         />
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
-        {store.getState() ? <DrawerItem onPress={LogOut} label="Logout" /> : null}
+        {store.getState() ? (
+          <DrawerItem onPress={LogOut} label="Logout" />
+        ) : null}
       </DrawerContentScrollView>
     );
   }
@@ -65,6 +79,19 @@ function Navigation() {
   function DrawerPart() {
     return (
       <Drawer.Navigator
+        screenOptions={{
+          headerPressColor: COLORS.lightOrangeButton,
+          headerShadowVisible: true,
+          headerTintColor: COLORS.mainBrown,
+          drawerActiveBackgroundColor: COLORS.secondOrange,
+          drawerActiveTintColor: COLORS.mainBrown,
+          drawerInactiveTintColor: '#333',
+          drawerLabelStyle: {
+            fontFamily: 'Poppins-Regular',
+            fontSize: 15,
+          },
+          itemStyle: {flex: 1, marginVertical: 5},
+        }}
         initialRouteName="Login"
         drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen name="Login" component={Login} />
