@@ -75,6 +75,7 @@ function Navigation() {
       type: LOGOUT,
       payload: false,
     });
+
   }
   function DrawerPart() {
     return (

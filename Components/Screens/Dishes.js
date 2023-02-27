@@ -13,6 +13,7 @@ import {COLORS} from '../Colors';
 import {useRoute} from '@react-navigation/native';
 import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import store from './store';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -65,9 +66,11 @@ export default function Dishes() {
                 </View>
 
                 <View style={styles.column}>
-                  <View style={styles.plusContainer}>
-                    <Icon name="plus-circle" style={styles.iconPlus} />
-                  </View>
+                  {store.getState() ? (
+                    <View style={styles.plusContainer}>
+                      <Icon name="plus-circle" style={styles.iconPlus} />
+                    </View>
+                  ) : null}
                   <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
                 </View>
               </View>
