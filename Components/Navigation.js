@@ -58,9 +58,20 @@ function Navigation() {
     return (
       <DrawerContentScrollView {...props}>
         {/*//przed lista z Drawer Part*/}
+        {/*Tymczasowe style*/}
         <Image
-          style={{height: 30, width: 30}}
-          source={{uri: 'https://reactnative.dev/img/tiny_logo.png'}}
+          style={{
+            height: 100,
+            width: 100,
+            justifyContent: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            alignContent: 'center',
+            marginLeft: 85,
+          }}
+          source={require('./Screens/logo.png')}
         />
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
@@ -75,7 +86,6 @@ function Navigation() {
       type: LOGOUT,
       payload: false,
     });
-
   }
   function DrawerPart() {
     return (
@@ -84,7 +94,7 @@ function Navigation() {
           headerPressColor: COLORS.lightOrangeButton,
           headerShadowVisible: true,
           headerTintColor: COLORS.mainBrown,
-          drawerActiveBackgroundColor: COLORS.secondOrange,
+          drawerActiveBackgroundColor: COLORS.fourthOrange,
           drawerActiveTintColor: COLORS.mainBrown,
           drawerInactiveTintColor: '#333',
           drawerLabelStyle: {

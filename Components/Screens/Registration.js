@@ -109,112 +109,138 @@ export default function Registration({navigation}) {
   function PageOne() {
     return (
       <View style={styles.container}>
-        <View>
-          <Text style={styles.textInput}>Login</Text>
-          <TextInput
-            value={login}
-            // placeholder="Login"
-            onChangeText={setLogin}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Hasło</Text>
-          <TextInput
-            value={password}
-            // placeholder="Password"
-            onChangeText={setPassword}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Powtórz Hasło</Text>
-          <TextInput
-            value={password}
-            // placeholder="Password"
-            onChangeText={setPassword}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Email</Text>
-          <TextInput
-            value={email}
-            // placeholder="Email"
-            onChangeText={setEmail}
-            style={styles.input}
-          />
+        <View style={styles.section}>
+          <View style={styles.logoContainer}>
+            {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
+            <View style={styles.column}>
+              <Text style={styles.textWelcome}>Zarejestruj się!</Text>
+              {/*<Image*/}
+              {/*  style={styles.logo}*/}
+              {/*  source={require('../Screens/food.png')}*/}
+              {/*/>*/}
+            </View>
+          </View>
+          <View style={styles.box}>
+            <View>
+              <Text style={styles.textInput}>Login</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={setLogin}
+                value={login}
+                // placeholder="Login"
+                keyboardType="default"
+              />
+              <Text style={styles.textInput}>Hasło</Text>
+              <TextInput
+                value={password}
+                // placeholder="Password"
+                onChangeText={setPassword}
+                style={styles.input}
+              />
+              <Text style={styles.textInput}>Powtórz Hasło</Text>
+              <TextInput
+                value={password}
+                // placeholder="Password"
+                onChangeText={setPassword}
+                style={styles.input}
+              />
+              <Text style={styles.textInput}>Email</Text>
+              <TextInput
+                value={email}
+                // placeholder="Email"
+                onChangeText={setEmail}
+                style={styles.input}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={() => changePage(true)}
+              style={styles.button}>
+              <Text style={styles.text}>Dalej</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <TouchableOpacity
-          onPress={() => changePage(true)}
-          style={styles.button}>
-          <Text style={styles.text}>Dalej</Text>
-        </TouchableOpacity>
       </View>
     );
   }
   function PageSecond() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() => changePage(false)}
-          style={styles.button}>
-          <Text style={styles.text}>Wstecz</Text>
-        </TouchableOpacity>
-        <View>
-          <Text style={styles.textInput}>Imię</Text>
-          <TextInput
-            value={name}
-            // placeholder="Name"
-            onChangeText={setName}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Nazwisko</Text>
-          <TextInput
-            value={surname}
-            // placeholder="Surname"
-            onChangeText={setSurname}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Adres</Text>
-          <TextInput
-            value={address}
-            // placeholder="Address"
-            onChangeText={setAdress}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Numer karty</Text>
-          <TextInput
-            value={cardNumber}
-            // placeholder="Card Number"
-            onChangeText={setCardNumber}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Data wygaśnięcia</Text>
-          <TextInput
-            value={exDate}
-            // placeholder="Expire Date"
-            onChangeText={setexDate}
-            style={styles.input}
-          />
-          <Text style={styles.textInput}>Kod cvv</Text>
-          <TextInput
-            value={cvv}
-            // placeholder="Cvv"
-            onChangeText={setCvv}
-            style={styles.input}
-          />
+        <View style={styles.section}>
+          <View style={styles.logoContainer}>
+            {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
+            <View style={styles.column}>
+              <Text style={styles.textWelcome}>Zarejestruj się!</Text>
+              <TouchableOpacity
+                onPress={() => changePage(false)}
+                style={styles.button}>
+                <Text style={styles.text}>Wstecz</Text>
+              </TouchableOpacity>
+              {/*<Image*/}
+              {/*  style={styles.logo}*/}
+              {/*  source={require('../Screens/food.png')}*/}
+              {/*/>*/}
+            </View>
+          </View>
+          <View style={styles.box}>
+            <View>
+              <Text style={styles.textInput}>Imię</Text>
+              <TextInput
+                value={name}
+                // placeholder="Name"
+                onChangeText={setName}
+                style={styles.input}
+              />
+              <Text style={styles.textInput}>Nazwisko</Text>
+              <TextInput
+                value={surname}
+                // placeholder="Surname"
+                onChangeText={setSurname}
+                style={styles.input}
+              />
+              <Text style={styles.textInput}>Adres</Text>
+              <TextInput
+                value={address}
+                // placeholder="Address"
+                onChangeText={setAdress}
+                style={styles.input}
+              />
+              <Text style={styles.textInput}>Numer karty</Text>
+              <TextInput
+                value={cardNumber}
+                // placeholder="Card Number"
+                onChangeText={setCardNumber}
+                style={styles.input}
+              />
+              <Text style={styles.textInput}>Data wygaśnięcia</Text>
+              <TextInput
+                value={exDate}
+                // placeholder="Expire Date"
+                onChangeText={setexDate}
+                style={styles.input}
+              />
+              <Text style={styles.textInput}>Kod cvv</Text>
+              <TextInput
+                value={cvv}
+                // placeholder="Cvv"
+                onChangeText={setCvv}
+                style={styles.input}
+              />
+            </View>
+            <TouchableOpacity style={styles.button} onPress={ValidateFields}>
+              <Text style={styles.text}>Zarejestruj się</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <TouchableOpacity style={styles.button} onPress={ValidateFields}>
-          <Text style={styles.text}>Zarejestruj się</Text>
-        </TouchableOpacity>
       </View>
     );
   }
   return (
     <ScrollView>
       <View>
-        <View style={styles.container}>
-          <Image style={styles.logo} source={require('../Screens/logo.jpg')} />
-        </View>
         {pageChanged ? <PageSecond /> : <PageOne />}
 
         <View style={styles.container}>
-          <TouchableOpacity style={styles.login}>
+          <TouchableOpacity>
             <Text style={styles.register} onPress={GoToLogin}>
               Masz już konto? Zaloguj się.
             </Text>
@@ -228,6 +254,18 @@ export default function Registration({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
+  },
+  section: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    alignContent: 'center',
+    backgroundColor: COLORS.fourthOrange,
+  },
+  box: {
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
@@ -235,35 +273,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     backgroundColor: 'white',
+    width: '100%',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    padding: 20,
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  column: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    alignContent: 'center',
   },
   button: {
     justifyContent: 'center',
-    // borderWidth: 2,
+    borderBottomWidth: 1,
     padding: 10,
-    margin: 20,
-    borderRadius: 5,
-    backgroundColor: COLORS.mainBrown,
+    marginTop: 20,
     width: 250,
-    marginBottom: 10,
+    borderRadius: 5,
+    borderColor: COLORS.thirdOrange,
+    backgroundColor: COLORS.mainBrown,
   },
   text: {
     textAlign: 'center',
     color: 'white',
+  },
+  textWelcome: {
+    textAlign: 'center',
+    color: COLORS.mainBrown,
+    fontSize: 24,
+    fontWeight: 800,
+    margin: 20,
+  },
+  textWelcome2: {
+    textAlign: 'center',
+    color: COLORS.mainBrown,
+    fontSize: 12,
+    fontWeight: 800,
   },
   textInput: {
     fontSize: 16,
     textAlign: 'left',
     color: COLORS.mainBrown,
     marginTop: 20,
-  },
-  logo: {
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // alignContent: 'center',
     width: 250,
-    height: 150,
-    marginBottom: 0,
-    marginTop: 20,
   },
   input: {
     padding: 5,
@@ -274,11 +332,22 @@ const styles = StyleSheet.create({
     borderColor: COLORS.mainBrown,
     textAlign: 'left',
     color: COLORS.mainBrown,
-    width: 320,
   },
-  login: {
+  logo: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    width: 200,
+    height: 150,
+    resizeMode: 'contain',
+  },
+  logoContainer: {
+    margin: 10,
+    padding: 10,
+  },
+  register: {
     textAlign: 'center',
-    color: 'grey',
+    marginTop: -10,
     marginBottom: 20,
   },
 });
