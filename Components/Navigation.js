@@ -104,7 +104,7 @@ function Navigation() {
             <DrawerItem
               onPress={LogOut}
               label="Logout"
-              labelStyle={{fontSize: 15, color: 'black', fontWeight: 0}}
+              labelStyle={{fontSize: 15, color: 'black', fontWeight: 400}}
               icon={() => <Ionicons name="exit" size={22} color="#ccc" />}
             />
           </View>

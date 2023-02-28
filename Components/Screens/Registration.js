@@ -106,141 +106,106 @@ export default function Registration({navigation}) {
       console.error(error);
     }
   }
-  function PageOne() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.section}>
-          <View style={styles.logoContainer}>
-            {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
-            <View style={styles.column}>
-              <Text style={styles.textWelcome}>Zarejestruj się!</Text>
-              {/*<Image*/}
-              {/*  style={styles.logo}*/}
-              {/*  source={require('../Screens/food.png')}*/}
-              {/*/>*/}
-            </View>
-          </View>
-          <View style={styles.box}>
-            <View>
-              <Text style={styles.textInput}>Login</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setLogin}
-                value={login}
-                // placeholder="Login"
-                keyboardType="default"
-              />
-              <Text style={styles.textInput}>Hasło</Text>
-              <TextInput
-                value={password}
-                // placeholder="Password"
-                onChangeText={setPassword}
-                style={styles.input}
-              />
-              <Text style={styles.textInput}>Powtórz Hasło</Text>
-              <TextInput
-                value={password}
-                // placeholder="Password"
-                onChangeText={setPasswordRepeat}
-                style={styles.input}
-              />
-              <Text style={styles.textInput}>Email</Text>
-              <TextInput
-                value={email}
-                // placeholder="Email"
-                onChangeText={setEmail}
-                style={styles.input}
-              />
-            </View>
-            <TouchableOpacity
-              onPress={() => changePage(true)}
-              style={styles.button}>
-              <Text style={styles.text}>Dalej</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    );
-  }
-  function PageSecond() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.section}>
-          <View style={styles.logoContainer}>
-            {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
-            <View style={styles.column}>
-              <Text style={styles.textWelcome}>Zarejestruj się!</Text>
-              <TouchableOpacity
-                onPress={() => changePage(false)}
-                style={styles.buttonBack}>
-                <Text style={styles.textBack}>Wstecz</Text>
-              </TouchableOpacity>
-              {/*<Image*/}
-              {/*  style={styles.logo}*/}
-              {/*  source={require('../Screens/food.png')}*/}
-              {/*/>*/}
-            </View>
-          </View>
-          <View style={styles.box}>
-            <View>
-              <Text style={styles.textInput}>Imię</Text>
-              <TextInput
-                value={name}
-                // placeholder="Name"
-                onChangeText={setName}
-                style={styles.input}
-                keyboardType="default"
-              />
-              <Text style={styles.textInput}>Nazwisko</Text>
-              <TextInput
-                value={surname}
-                // placeholder="Surname"
-                onChangeText={setSurname}
-                style={styles.input}
-              />
-              <Text style={styles.textInput}>Adres</Text>
-              <TextInput
-                value={address}
-                // placeholder="Address"
-                onChangeText={setAdress}
-                style={styles.input}
-              />
-              <Text style={styles.textInput}>Numer karty</Text>
-              <TextInput
-                value={cardNumber}
-                // placeholder="Card Number"
-                onChangeText={setCardNumber}
-                style={styles.input}
-              />
-              <Text style={styles.textInput}>Data wygaśnięcia</Text>
-              <TextInput
-                value={exDate}
-                // placeholder="Expire Date"
-                onChangeText={setexDate}
-                style={styles.input}
-              />
-              <Text style={styles.textInput}>Kod cvv</Text>
-              <TextInput
-                value={cvv}
-                // placeholder="Cvv"
-                onChangeText={setCvv}
-                style={styles.input}
-              />
-            </View>
-            <TouchableOpacity style={styles.button} onPress={ValidateFields}>
-              <Text style={styles.text}>Zarejestruj się</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    );
-  }
+
   return (
     <ScrollView>
       <View>
-        {pageChanged ? <PageSecond /> : <PageOne />}
-
         <View style={styles.container}>
+          <View style={styles.section}>
+            <View style={styles.logoContainer}>
+              {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
+              <View style={styles.column}>
+                <Text style={styles.textWelcome}>Zarejestruj się!</Text>
+                {/*<Image*/}
+                {/*  style={styles.logo}*/}
+                {/*  source={require('../Screens/food.png')}*/}
+                {/*/>*/}
+              </View>
+            </View>
+            <View style={styles.box}>
+              <View>
+                <Text style={styles.textInput}>Login</Text>
+                <TextInput
+                  style={styles.input}
+                  value={login}
+                  onChangeText={setLogin}
+                  // placeholder="Login"
+                  keyboardType="default"
+                />
+                <Text style={styles.textInput}>Hasło</Text>
+                <TextInput
+                  value={password}
+                  // placeholder="Password"
+                  onChangeText={setPassword}
+                  style={styles.input}
+                />
+                <Text style={styles.textInput}>Powtórz Hasło</Text>
+                <TextInput
+                  value={password}
+                  // placeholder="Password"
+                  onChangeText={setPasswordRepeat}
+                  style={styles.input}
+                />
+                <Text style={styles.textInput}>Email</Text>
+                <TextInput
+                  value={email}
+                  // placeholder="Email"
+                  onChangeText={setEmail}
+                  style={styles.input}
+                />
+              </View>
+              <View>
+                <Text style={styles.textInput}>Imię</Text>
+                <TextInput
+                  value={name}
+                  // placeholder="Name"
+                  onChangeText={setName}
+                  style={styles.input}
+                  keyboardType="default"
+                />
+                <Text style={styles.textInput}>Nazwisko</Text>
+                <TextInput
+                  value={surname}
+                  // placeholder="Surname"
+                  onChangeText={setSurname}
+                  style={styles.input}
+                />
+                <Text style={styles.textInput}>Adres</Text>
+                <TextInput
+                  value={address}
+                  // placeholder="Address"
+                  onChangeText={setAdress}
+                  style={styles.input}
+                />
+                <Text style={styles.textInput}>Numer karty</Text>
+                <TextInput
+                  value={cardNumber}
+                  // placeholder="Card Number"
+                  onChangeText={setCardNumber}
+                  style={styles.input}
+                />
+                <Text style={styles.textInput}>Data wygaśnięcia</Text>
+                <TextInput
+                  defaultValue={exDate}
+                  // placeholder="Expire Date"
+                  onChangeText={setexDate}
+                  style={styles.input}
+                />
+                <Text style={styles.textInput}>Kod cvv</Text>
+                <TextInput
+                  value={cvv}
+                  // placeholder="Cvv"
+                  onChangeText={setCvv}
+                  style={styles.input}
+                />
+              </View>
+              <TouchableOpacity style={styles.button} onPress={ValidateFields}>
+                <Text style={styles.text}>Zarejestruj się</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <View>
           <TouchableOpacity>
             <Text style={styles.register} onPress={GoToLogin}>
               Masz już konto? Zaloguj się.

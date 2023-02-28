@@ -13,6 +13,7 @@ import {COLORS} from '../Colors';
 import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from './store';
+import CookieManager from '@react-native-cookies/cookies';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
