@@ -10,7 +10,7 @@ function App() {
   SplashScreen.hide();
   return (
     <StoreProvider store={store}>
-      <Navigation></Navigation>
+      <Navigation />
     </StoreProvider>
   );
 }

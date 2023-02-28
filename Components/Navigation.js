@@ -5,7 +5,6 @@ import {
   DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import SplashScreen from 'react-native-splash-screen';
 import React, {useEffect, useState} from 'react';
 
 import Registration from './Screens/Registration';
@@ -18,16 +17,29 @@ import Checkout from './Screens/Checkout';
 import {Image} from 'react-native';
 import {loginReducer} from './Reducer';
 import {LOGIN, LOGOUT} from './actions';
-import {Provider as StoreProvider, useDispatch} from 'react-redux';
+import { useDispatch} from 'react-redux';
 import store from './Screens/store';
+import jwtDecode from 'jwt-decode';
+import {getData} from './StorageHelper';
+import {isTokenExp} from './Utilities';
 import {COLORS} from './Colors';
 
 function Navigation() {
   const Drawer = createDrawerNavigator();
-  let interval;
   const dispatch = useDispatch();
   const Stack = createNativeStackNavigator();
-  useEffect(() => {}, []);
+  const [checkOldToken, checked] = useState('');
+
+  useEffect(() => {
+    if (!checkOldToken) {
+      getData('JWT').then(token => {
+        if (!isTokenExp(token)) {
+          dispatch({type: LOGIN, payload: token});
+        }
+      });
+      checked(true);
+    }
+  }, [checkOldToken, dispatch]);
   function StackPart() {
     return (
       <Stack.Navigator
@@ -64,7 +76,7 @@ function Navigation() {
         />
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
-        {store.getState() ? (
+        {store.getState().loggedIn ? (
           <DrawerItem onPress={LogOut} label="Logout" />
         ) : null}
       </DrawerContentScrollView>
@@ -73,7 +85,6 @@ function Navigation() {
   function LogOut() {
     dispatch({
       type: LOGOUT,
-      payload: false,
     });
 
   }
@@ -97,7 +108,7 @@ function Navigation() {
         drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen name="Login" component={Login} />
         <Drawer.Screen name="Restaurants" component={Restaurants} />
-        {store.getState() ? (
+        {store.getState().loggedIn ? (
           <Drawer.Screen name="Checkout" component={Checkout} />
         ) : (
           <Drawer.Screen name="Registrations" component={Registration} />
