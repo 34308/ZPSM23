@@ -16,13 +16,14 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Checkout from './Screens/Checkout';
 import {Image, View} from 'react-native';
 import {loginReducer} from './Reducer';
-import {LOGIN, LOGOUT} from './actions';
+import {JWT, LOGIN, LOGOUT} from './actions';
 import {useDispatch} from 'react-redux';
 import store from './Screens/store';
 import {getData} from './StorageHelper';
 import {isTokenExp} from './Utilities';
 import {COLORS} from './Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Navigation() {
   const Drawer = createDrawerNavigator();
@@ -32,9 +33,11 @@ function Navigation() {
 
   useEffect(() => {
     if (!checkOldToken) {
-      getData('JWT').then(token => {
-        if (!isTokenExp(token)) {
-          dispatch({type: LOGIN, payload: token});
+      getData(JWT).then(token => {
+        if (token !== null) {
+          if (!isTokenExp(token)) {
+            dispatch({type: LOGIN, payload: token});
+          }
         }
       });
       checked(true);

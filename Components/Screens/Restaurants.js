@@ -29,7 +29,7 @@ export default function Restaurants({navigation}) {
 
   function goToRestaurant(restaurantName) {
     navigation.navigate('Dishes', {
-      restaurantUrl: restaurantName + '/dishes?p=1',
+      restaurantUrl: restaurantName + '/dishes?p=0',
       restaurantName: restaurantName,
     });
   }
