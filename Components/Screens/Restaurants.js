@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   text: {
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     fontFamily: 'Ubuntu-Light',
     fontSize: 26,
     textAlign: 'center',
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     borderRadius: 5,
     // borderColor: COLORS.mainOrange,
-    backgroundColor: COLORS.lightOrangeButton,
+    backgroundColor: COLORS.third,
     margin: 30,
   },
   image: {
@@ -134,13 +134,13 @@ const styles = StyleSheet.create({
     height: imageHeight/1.5,
     resizeMode: 'contain',
     borderRadius: 5,
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
     borderWidth: 1,
     margin: 20,
   },
   line: {
     flex: 1,
     borderBottomWidth: 1,
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
   },
 });

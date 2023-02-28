@@ -76,13 +76,14 @@ export default function Dishes({navigation}) {
                   <Text style={styles.line} />
                 </View>
 
-                <View style={styles.column}>
-                  {store.getState() ? (
-                    <View style={styles.plusContainer}>
-                      <Icon name="plus-circle" style={styles.iconPlus} />
-                    </View>
-                  ) : null}
+                <View style={styles.columnPrice}>
+                  <Text style={styles.textTitle}>CENA</Text>
                   <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
+                  {store.getState() ? (
+                      <View style={styles.plusContainer}>
+                        <Icon name="plus-circle" style={styles.iconPlus} />
+                      </View>
+                  ) : null}
                 </View>
               </View>
             </View>
@@ -116,14 +117,15 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   textSearchBar: {
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     fontFamily: 'Ubuntu-Light',
     fontSize: 16,
     textAlign: 'left',
   },
   textTitle: {
     fontSize: 16,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
+    marginBottom: 10,
   },
   textDesc: {
     fontSize: 12,
@@ -131,14 +133,20 @@ const styles = StyleSheet.create({
   },
   textPrice: {
     fontSize: 16,
-    color: COLORS.mainOrange2,
+    color: COLORS.second,
     fontWeight: 800,
-    marginTop: 50,
+    marginBottom: 10,
   },
   column: {
     width: 190,
-    flexDirection: 'column',
     marginRight: 10,
+  },
+  columnPrice: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    alignItems: 'center',
   },
   row: {
     flex: 1,
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingBottom: 15,
     borderBottomWidth: 1,
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
   },
   plusContainer: {
     justifyContent: 'center',
@@ -158,7 +166,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     width: 35,
     borderRadius: 5,
-    backgroundColor: COLORS.mainBrown,
+    backgroundColor: COLORS.second,
+    marginTop: 20,
   },
   searchBar: {
     justifyContent: 'flex-start',
@@ -168,7 +177,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     backgroundColor: 'white',
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
     borderWidth: 1,
     borderRadius: 5,
     width: 380,
@@ -179,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 10,
     marginRight: 5,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
   },
   iconPlus: {
     fontSize: 26,
@@ -210,7 +219,7 @@ const styles = StyleSheet.create({
     height: imageHeight / 2,
     resizeMode: 'cover',
     borderRadius: 5,
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
     borderWidth: 1,
     margin: 20,
   },

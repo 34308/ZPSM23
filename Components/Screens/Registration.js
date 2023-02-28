@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    backgroundColor: COLORS.mainBrown,
+    backgroundColor: COLORS.second,
   },
   box: {
     justifyContent: 'center',
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 5,
     borderColor: COLORS.thirdOrange,
-    backgroundColor: COLORS.mainBrown,
+    backgroundColor: COLORS.second,
   },
   buttonBack: {
     justifyContent: 'center',
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 5,
     borderColor: COLORS.thirdOrange,
-    backgroundColor: COLORS.mainOrange2,
+    backgroundColor: COLORS.main,
   },
   text: {
     textAlign: 'center',
@@ -314,25 +314,25 @@ const styles = StyleSheet.create({
   },
   textBack: {
     textAlign: 'center',
-    color: COLORS.mainBrown,
+    color: COLORS.second,
   },
   textWelcome: {
     textAlign: 'center',
-    color: COLORS.mainOrange2,
+    color: COLORS.main,
     fontSize: 24,
     fontWeight: 800,
     margin: 20,
   },
   textWelcome2: {
     textAlign: 'center',
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     fontSize: 12,
     fontWeight: 800,
   },
   textInput: {
     fontSize: 16,
     textAlign: 'left',
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     marginTop: 20,
     width: 250,
   },
@@ -342,9 +342,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 2,
     borderRadius: 5,
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
     textAlign: 'left',
-    color: COLORS.mainBrown,
+    color: COLORS.second,
   },
   logo: {
     justifyContent: 'center',

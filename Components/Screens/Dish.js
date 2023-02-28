@@ -13,6 +13,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import store from './store';
 import {useRoute} from '@react-navigation/native';
 import {COLORS} from '../Colors';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -90,7 +93,7 @@ export default function Dish() {
 
 const styles = StyleSheet.create({
   main: {
-    backgroundColor: COLORS.mainBrown,
+    backgroundColor: COLORS.second,
   },
   container: {
     justifyContent: 'center',
@@ -101,6 +104,13 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     backgroundColor: 'white',
     marginTop: 10,
+  },
+  column: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignContent: 'center',
   },
   row: {
     justifyContent: 'flex-start',
@@ -114,7 +124,7 @@ const styles = StyleSheet.create({
   counterText: {
     textAlign: 'center',
     fontSize: 22,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     fontWeight: 800,
     marginLeft: 20,
     marginRight: 20,
@@ -122,7 +132,7 @@ const styles = StyleSheet.create({
   icon: {
     margin: 0,
     fontSize: 30,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
   },
   dishContainer: {
     justifyContent: 'center',
@@ -136,7 +146,7 @@ const styles = StyleSheet.create({
   },
   textTitle: {
     fontSize: 24,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     marginTop: 20,
   },
   textDesc: {
@@ -145,13 +155,13 @@ const styles = StyleSheet.create({
   },
   textDescTitle: {
     fontSize: 20,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     marginBottom: 10,
   },
   descContainer: {
     borderBottomWidth: 1,
     borderTopWidth: 1,
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
     borderRadius: 5,
     padding: 10,
     width: 350,
@@ -162,7 +172,7 @@ const styles = StyleSheet.create({
     fontWeight: 800,
     textAlign: 'center',
     fontSize: 26,
-    color: COLORS.mainOrange2,
+    color: COLORS.main,
   },
   imageContainer: {
     justifyContent: 'center',
@@ -181,8 +191,8 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: imageHeight,
-    borderRadius: 2,
-    borderColor: COLORS.mainBrown,
+    borderRadius: 5,
+    borderColor: COLORS.main,
     borderWidth: 1,
   },
   button: {
@@ -191,7 +201,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.mainBrown,
+    backgroundColor: COLORS.second,
   },
   buttonText: {
     textAlign: 'center',
@@ -201,7 +211,7 @@ const styles = StyleSheet.create({
     fontWeight: 800,
   },
   buttonIcon: {
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     fontSize: 20,
   },
   rowButton: {

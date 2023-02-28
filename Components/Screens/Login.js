@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    backgroundColor: COLORS.mainBrown,
+    backgroundColor: COLORS.second,
   },
   box: {
     justifyContent: 'center',
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 5,
     borderColor: COLORS.thirdOrange,
-    backgroundColor: COLORS.mainBrown,
+    backgroundColor: COLORS.second,
   },
   text: {
     textAlign: 'center',
@@ -179,20 +179,20 @@ const styles = StyleSheet.create({
   },
   textWelcome: {
     textAlign: 'center',
-    color: COLORS.mainOrange2,
+    color: COLORS.main,
     fontSize: 24,
     fontWeight: 800,
   },
   textWelcome2: {
     textAlign: 'center',
-    color: COLORS.mainOrange2,
+    color: COLORS.main,
     fontSize: 12,
     fontWeight: 800,
   },
   textInput: {
     fontSize: 16,
     textAlign: 'left',
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     marginTop: 20,
   },
   input: {
@@ -201,9 +201,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 2,
     borderRadius: 5,
-    borderColor: COLORS.mainBrown,
+    borderColor: COLORS.second,
     textAlign: 'left',
-    color: COLORS.mainBrown,
+    color: COLORS.second,
   },
   logo: {
     justifyContent: 'center',

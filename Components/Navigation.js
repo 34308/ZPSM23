@@ -47,7 +47,7 @@ function Navigation() {
           contentStyle: {backgroundColor: 'white'},
           headerShown: false,
           backgroundColor: 'white',
-          headerTintColor: COLORS.mainBrown,
+          headerTintColor: COLORS.second,
         }}>
         <Stack.Screen name="Drawer" component={DrawerPart} />
         <Stack.Screen name="Dish" component={Dish} />
@@ -70,7 +70,7 @@ function Navigation() {
             alignContent: 'center',
             margin: 10,
             borderBottomWidth: 1,
-            borderColor: COLORS.mainBrown,
+            borderColor: COLORS.second,
           }}>
           <Image
             style={{
@@ -101,9 +101,9 @@ function Navigation() {
         screenOptions={{
           headerPressColor: COLORS.lightOrangeButton,
           headerShadowVisible: true,
-          headerTintColor: COLORS.mainBrown,
-          drawerActiveBackgroundColor: COLORS.mainBrown,
-          drawerActiveTintColor: COLORS.mainOrange2,
+          headerTintColor: COLORS.second,
+          drawerActiveBackgroundColor: COLORS.second,
+          drawerActiveTintColor: COLORS.main,
           drawerInactiveTintColor: '#333',
           drawerLabelStyle: {
             fontFamily: 'Poppins-Regular',
@@ -120,7 +120,7 @@ function Navigation() {
               <Icon
                 name="user-circle-o"
                 size={size - 3}
-                color={focused ? COLORS.mainOrange2 : '#ccc'}
+                color={focused ? COLORS.main : '#ccc'}
               />
             ),
           }}
@@ -134,7 +134,7 @@ function Navigation() {
               <Icon
                 name="home"
                 size={size - 2}
-                color={focused ? COLORS.mainOrange2 : '#ccc'}
+                color={focused ? COLORS.main : '#ccc'}
               />
             ),
           }}
@@ -149,7 +149,7 @@ function Navigation() {
                 <Icon
                   name="shopping-cart"
                   size={size - 2}
-                  color={focused ? COLORS.mainOrange2 : '#ccc'}
+                  color={focused ? COLORS.main : '#ccc'}
                 />
               ),
             }}
@@ -164,7 +164,7 @@ function Navigation() {
                 <Icon
                   name="user-plus"
                   size={size - 4}
-                  color={focused ? COLORS.mainOrange2 : '#ccc'}
+                  color={focused ? COLORS.main : '#ccc'}
                 />
               ),
             }}

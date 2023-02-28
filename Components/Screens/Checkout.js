@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     marginLeft: 10,
   },
   card: {
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   counterText: {
     textAlign: 'center',
     fontSize: 22,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
     fontWeight: 800,
     marginLeft: 15,
     marginRight: 15,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   icon: {
     margin: 0,
     fontSize: 24,
-    color: COLORS.mainBrown,
+    color: COLORS.second,
   },
   imageContainer: {
     justifyContent: 'center',
