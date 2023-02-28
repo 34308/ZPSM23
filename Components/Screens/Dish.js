@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import store from './store';
 import {useRoute} from '@react-navigation/native';
 import {COLORS} from '../Colors';
-import { LogBox } from 'react-native';
+import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 import {getUserName} from '../Utilities';
@@ -127,30 +127,35 @@ export default function Dish() {
           <View style={[styles.imageContainer, styles.elevation]}>
             <Image style={styles.image} source={{uri: dish.imageUrl}} />
           </View>
-          <View style={styles.row}>
-            <TouchableOpacity onPress={() => deleteItem()}>
-              <Icon name="minus-square" style={styles.icon} />
-            </TouchableOpacity>
-            <View style={styles.counter}>
-              <Text style={styles.counterText}>{counter}</Text>
+          {store.getState().isLoggedIn ? (
+            <View style={styles.row}>
+              <TouchableOpacity onPress={() => deleteItem()}>
+                <Icon name="minus-square" style={styles.icon} />
+              </TouchableOpacity>
+              <View style={styles.counter}>
+                <Text style={styles.counterText}>{counter}</Text>
+              </View>
+              <TouchableOpacity onPress={() => addItem()}>
+                <Icon name="plus-square" style={styles.icon} />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => addItem()}>
-              <Icon name="plus-square" style={styles.icon} />
-            </TouchableOpacity>
-          </View>
+          ) : null}
           <View style={styles.descContainer}>
             <Text style={styles.textDescTitle}>Opis</Text>
             <Text style={styles.textDesc}>{dish.description}</Text>
           </View>
-          <View style={styles.button}>
-            <TouchableOpacity
-              onPress={() => addItemToCasket(dish.dishId, counter)}>
-              <View style={styles.rowButton}>
-                {/*<Icon name="cart-plus" style={styles.buttonIcon} />*/}
-                <Text style={styles.buttonText}>Dodaj do koszyka</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+
+          {store.getState().isLoggedIn ? (
+            <View style={styles.button}>
+              <TouchableOpacity
+                onPress={() => addItemToCasket(dish.dishId, counter)}>
+                <View style={styles.rowButton}>
+                  {/*<Icon name="cart-plus" style={styles.buttonIcon} />*/}
+                  <Text style={styles.buttonText}>Dodaj do koszyka</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </View>

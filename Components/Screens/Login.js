@@ -30,7 +30,6 @@ export default function Login({navigation}) {
     } else {
       try {
         logIn();
-
       } catch (error) {
         console.error(error);
       }

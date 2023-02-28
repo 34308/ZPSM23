@@ -19,13 +19,14 @@ export default function loginReducer(state = initialState, action) {
       return {
         ...state,
         token: payload,
-        loggedIn: true,
+        isLoggedIn: true,
       };
     case LOGOUT:
       storeData('JWT', '');
       return {
+        ...state,
         user: '',
-        loggedIn: false,
+        isLoggedIn: false,
       };
     default:
       return state;

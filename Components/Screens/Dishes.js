@@ -4,7 +4,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput, TouchableOpacity,
+  TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -80,10 +81,10 @@ export default function Dishes({navigation}) {
                 <View style={styles.columnPrice}>
                   <Text style={styles.textTitle}>CENA</Text>
                   <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
-                  {store.getState() ? (
-                      <View style={styles.plusContainer}>
-                        <Icon name="plus-circle" style={styles.iconPlus} />
-                      </View>
+                  {store.getState().isLoggedIn ? (
+                    <View style={styles.plusContainer}>
+                      <Icon name="plus-circle" style={styles.iconPlus} />
+                    </View>
                   ) : null}
                 </View>
               </View>

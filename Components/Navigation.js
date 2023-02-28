@@ -97,7 +97,7 @@ function Navigation() {
         </View>
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
-        {store.getState().loggedIn ? (
+        {store.getState().isLoggedIn ? (
           <DrawerItem onPress={LogOut} label="Logout" />
         ) : null}
       </DrawerContentScrollView>
