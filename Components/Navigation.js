@@ -5,7 +5,6 @@ import {
   DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import SplashScreen from 'react-native-splash-screen';
 import React, {useEffect, useState} from 'react';
 
 import Registration from './Screens/Registration';
@@ -15,22 +14,31 @@ import Dish from './Screens/Dish';
 import Login from './Screens/Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Checkout from './Screens/Checkout';
-import {Image} from 'react-native';
+import {Image, Text} from 'react-native';
 import {loginReducer} from './Reducer';
 import {LOGIN, LOGOUT} from './actions';
 import {Provider as StoreProvider, useDispatch} from 'react-redux';
 import store from './Screens/store';
+import jwtDecode from 'jwt-decode';
+import {getData} from './StorageHelper';
+import {isTokenExp} from './Utilities';
 
 function Navigation() {
   const Drawer = createDrawerNavigator();
-  let interval;
   const dispatch = useDispatch();
   const Stack = createNativeStackNavigator();
+  const [checkOldToken, checked] = useState('');
+
   useEffect(() => {
-    interval = setInterval(() => {
-      console.log('check if logged', store.getState());
-    }, 1000);
-  }, []);
+    if (!checkOldToken) {
+      getData('JWT').then(token => {
+        if (!isTokenExp(token)) {
+          dispatch({type: LOGIN, payload: token});
+        }
+      });
+      checked(true);
+    }
+  }, [checkOldToken, dispatch]);
   function StackPart() {
     return (
       <Stack.Navigator
@@ -52,14 +60,15 @@ function Navigation() {
         />
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
-        {store.getState() ? <DrawerItem onPress={LogOut} label="Logout" /> : null}
+        {store.getState().loggedIn ? (
+          <DrawerItem onPress={LogOut} label="Logout" />
+        ) : null}
       </DrawerContentScrollView>
     );
   }
   function LogOut() {
     dispatch({
       type: LOGOUT,
-      payload: false,
     });
   }
   function DrawerPart() {
@@ -69,7 +78,7 @@ function Navigation() {
         drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen name="Login" component={Login} />
         <Drawer.Screen name="Restaurants" component={Restaurants} />
-        {store.getState() ? (
+        {store.getState().loggedIn ? (
           <Drawer.Screen name="Checkout" component={Checkout} />
         ) : (
           <Drawer.Screen name="Registrations" component={Registration} />

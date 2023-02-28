@@ -1,3 +1,5 @@
+import {getData} from './StorageHelper';
+const JWT = 'JWT';
 const LOGIN = 'login';
 const LOGOUT = 'logout';
-export {LOGIN, LOGOUT};
+export {LOGIN, JWT, LOGOUT};
