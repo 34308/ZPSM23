@@ -1,5 +1,4 @@
 import {
-  Button,
   Text,
   View,
   StyleSheet,
@@ -9,14 +8,13 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
-import {useEffect, useState} from 'react';
-import {storeData} from '../StorageHelper';
+import {useState} from 'react';
 import {COLORS} from '../Colors';
 import {useDispatch} from 'react-redux';
 import {LOGIN} from '../actions';
+import store from './store';
 
 export default function Login({navigation}) {
-  const [jwt, setJwt] = useState('');
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
@@ -27,13 +25,11 @@ export default function Login({navigation}) {
   };
 
   const ValidateFields = async () => {
-    if (login == '' || password == '' || login == null || password == null) {
+    if (login === '' || password === '' || login == null || password == null) {
       alert('Uzupełnij wszystkie pola.');
     } else {
       try {
         logIn();
-        alert('User added.');
-        //GoToUserInterface()
       } catch (error) {
         console.error(error);
       }
@@ -54,9 +50,7 @@ export default function Login({navigation}) {
         }),
       }).then(async response => {
         const data = await response.text();
-        setJwt(data);
-        dispatch({type: LOGIN, payload: true});
-        await storeData('JWT', data);
+        dispatch({type: LOGIN, payload: '' + data});
       });
     } catch (error) {
       console.error(error);
@@ -66,12 +60,11 @@ export default function Login({navigation}) {
     const resp = await fetch('http://10.0.2.2:8082/broniq1/user', {
       method: 'GET',
       headers: new Headers({
-        Authorization: 'Bearer ' + jwt,
+        Authorization: 'Bearer ' + store.getState().token,
         'Content-Type': 'application/x-www-form-urlencoded',
       }),
     });
     const data = await resp.text();
-    setJwt(data);
     console.log(data);
   }
 

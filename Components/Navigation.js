@@ -17,9 +17,8 @@ import Checkout from './Screens/Checkout';
 import {Image, View} from 'react-native';
 import {loginReducer} from './Reducer';
 import {LOGIN, LOGOUT} from './actions';
-import { useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import store from './Screens/store';
-import jwtDecode from 'jwt-decode';
 import {getData} from './StorageHelper';
 import {isTokenExp} from './Utilities';
 import {COLORS} from './Colors';
@@ -29,7 +28,7 @@ function Navigation() {
   const Drawer = createDrawerNavigator();
   const dispatch = useDispatch();
   const Stack = createNativeStackNavigator();
-  const [checkOldToken, checked] = useState('');
+  const [checkOldToken, checked] = useState(false);
 
   useEffect(() => {
     if (!checkOldToken) {
@@ -152,7 +151,7 @@ function Navigation() {
           name="Restaurants"
           component={Restaurants}
         />
-        {store.getState() ? (
+        {store.getState().isLoggedIn ? (
           <Drawer.Screen
             options={{
               title: 'Koszyk',
