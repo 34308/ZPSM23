@@ -141,7 +141,7 @@ export default function Registration({navigation}) {
               <TextInput
                 value={password}
                 // placeholder="Password"
-                onChangeText={setPassword}
+                onChangeText={setPasswordRepeat}
                 style={styles.input}
               />
               <Text style={styles.textInput}>Email</Text>
@@ -189,6 +189,7 @@ export default function Registration({navigation}) {
                 // placeholder="Name"
                 onChangeText={setName}
                 style={styles.input}
+                keyboardType="default"
               />
               <Text style={styles.textInput}>Nazwisko</Text>
               <TextInput

@@ -12,6 +12,7 @@ import Restaurants from './Screens/Restaurants';
 import Dishes from './Screens/Dishes';
 import Dish from './Screens/Dish';
 import Login from './Screens/Login';
+import Settings from './Screens/Settings';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Checkout from './Screens/Checkout';
 import {Image, View} from 'react-native';
@@ -23,6 +24,7 @@ import {getData} from './StorageHelper';
 import {isTokenExp} from './Utilities';
 import {COLORS} from './Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Navigation() {
@@ -98,7 +100,14 @@ function Navigation() {
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
         {store.getState().isLoggedIn ? (
-          <DrawerItem onPress={LogOut} label="Logout" />
+          <View>
+            <DrawerItem
+              onPress={LogOut}
+              label="Logout"
+              labelStyle={{fontSize: 15, color: 'black', fontWeight: 0}}
+              icon={() => <Ionicons name="exit" size={22} color="#ccc" />}
+            />
+          </View>
         ) : null}
       </DrawerContentScrollView>
     );
@@ -126,20 +135,38 @@ function Navigation() {
         }}
         initialRouteName="Login"
         drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen
-          options={{
-            title: 'Zaloguj się',
-            drawerIcon: ({focused, size}) => (
-              <Icon
-                name="user-circle-o"
-                size={size - 3}
-                color={focused ? COLORS.main : '#ccc'}
-              />
-            ),
-          }}
-          name="Login"
-          component={Login}
-        />
+        {store.getState().isLoggedIn ? (
+          <Drawer.Screen
+            options={{
+              title: 'Ustawienia',
+              drawerIcon: ({focused, size}) => (
+                <Icon
+                  name="user-circle-o"
+                  size={size - 3}
+                  color={focused ? COLORS.main : '#ccc'}
+                />
+              ),
+            }}
+            name="Settings"
+            component={Settings}
+          />
+        ) : (
+          <Drawer.Screen
+            options={{
+              title: 'Zaloguj się',
+              drawerIcon: ({focused, size}) => (
+                <Icon
+                  name="user-circle-o"
+                  size={size - 3}
+                  color={focused ? COLORS.main : '#ccc'}
+                />
+              ),
+            }}
+            name="Login"
+            component={Login}
+          />
+        )}
+
         <Drawer.Screen
           options={{
             title: 'Restauracje',
@@ -181,7 +208,7 @@ function Navigation() {
                 />
               ),
             }}
-            name="Registrations"
+            name="Registration"
             component={Registration}
           />
         )}

@@ -19,7 +19,7 @@ export default function Login({navigation}) {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const goToRegister = () => {
-    navigation.navigate('Registrations');
+    navigation.navigate('Registration');
     setLogin('');
     setPassword('');
   };
