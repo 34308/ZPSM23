@@ -4,14 +4,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
+  TextInput, TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {COLORS} from '../Colors';
 import {useRoute} from '@react-navigation/native';
-import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from './store';
 
@@ -24,7 +22,8 @@ export default function Dishes({navigation}) {
   // const [isPressed, setPressed] = useState('');
   const route = useRoute();
   const url = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantUrl;
-  const restaurantName = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
+  const restaurantName =
+    'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,7 +36,7 @@ export default function Dishes({navigation}) {
       }
     };
     fetchData();
-  }, []);
+  }, [route.params.restaurantName]);
 
   function goToDish(dishUrl) {
     console.log('DishUrl navigate: ' + dishUrl);
@@ -64,7 +63,9 @@ export default function Dishes({navigation}) {
             <View key={i + item.dishId}>
               <View style={styles.row}>
                 <TouchableOpacity
-                  onPress={() => goToDish(restaurantName + '/dishes/' + item.name)}>
+                  onPress={() =>
+                    goToDish(restaurantName + '/dishes/' + item.name)
+                  }>
                   <View style={styles.imageContainer}>
                     <Image style={styles.image} source={{uri: item.imageUrl}} />
                   </View>

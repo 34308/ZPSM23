@@ -4,7 +4,8 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  Image, Dimensions,
+  Image,
+  Dimensions,
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import {COLORS} from '../Colors';
@@ -27,9 +28,8 @@ export default function Restaurants({navigation}) {
   // };
 
   function goToRestaurant(restaurantName) {
-    console.log('Restaurant navigate: ' + restaurantName);
     navigation.navigate('Dishes', {
-      restaurantUrl: restaurantName + '/dishes?p=1',
+      restaurantUrl: restaurantName + '/dishes?p=0',
       restaurantName: restaurantName,
     });
   }
@@ -41,7 +41,6 @@ export default function Restaurants({navigation}) {
       try {
         const resp = await fetch(url);
         const data = await resp.json();
-        console.log(data);
         setRestaurants(data);
       } catch (error) {
         console.log('error', error);
@@ -60,11 +59,8 @@ export default function Restaurants({navigation}) {
               key={i + item.name + item.restaurantsId}
               style={styles.imageContainer}>
               <TouchableOpacity onPress={() => goToRestaurant(item.name)}>
-                <Image
-                    style={styles.image}
-                    source={{uri: item.imageUrl}}
-                />
-                <View style={styles.line}></View>
+                <Image style={styles.image} source={{uri: item.imageUrl}} />
+                <View style={styles.line} />
                 {/*<Text style={styles.text} key={item.name + i}>*/}
                 {/*  {item.name}*/}
                 {/*</Text>*/}
@@ -121,8 +117,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    width: imageWidth/1.5,
-    height: imageHeight/1.5,
+    width: imageWidth / 1.5,
+    height: imageHeight / 1.5,
     // borderWidth: 1,
     borderRadius: 5,
     // borderColor: COLORS.mainOrange,
@@ -130,8 +126,8 @@ const styles = StyleSheet.create({
     margin: 30,
   },
   image: {
-    width: imageWidth/1.5,
-    height: imageHeight/1.5,
+    width: imageWidth / 1.5,
+    height: imageHeight / 1.5,
     resizeMode: 'contain',
     borderRadius: 5,
     borderColor: COLORS.second,

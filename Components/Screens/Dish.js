@@ -16,6 +16,7 @@ import {COLORS} from '../Colors';
 import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
+import {getUserName} from '../Utilities';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -26,6 +27,8 @@ export default function Dish() {
   const [counter, setCounter] = useState(0);
   const route = useRoute();
   const url = route.params.dishUrl;
+  const [cartItems, setCartItems] = useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   function addItem() {
     setCounter(counter + 1);
@@ -35,7 +38,9 @@ export default function Dish() {
       setCounter(counter - 1);
     }
   }
-
+  function addItem() {
+    setCounter(counter + 1);
+  }
   // {login}/usercart/{dishId}/save/{count}
 
   useEffect(() => {
@@ -48,8 +53,68 @@ export default function Dish() {
         console.log('error', error);
       }
     };
+    async function getCart() {
+      const resp2 = await fetch(
+        'http://10.0.2.2:8082/' +
+          getUserName(store.getState().token) +
+          '/usercart?p=0',
+        {
+          method: 'GET',
+          headers: new Headers({
+            Authorization: 'Bearer ' + store.getState().token,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }),
+        },
+      );
+      const text = await resp2.text();
+      console.log(text);
+      let data2 = JSON.parse(text);
+
+      setCartItems(data2.content);
+      if (
+        data2.content.some(item => {
+          return item.dish.name === dish.name;
+        })
+      ) {
+        setCounter(
+          data2.content.find(item => {
+            return item.dish.name === dish.name;
+          }).countOfDish,
+        );
+      }
+    }
     fetchData();
+    getCart();
+  }, [dish.name, url]);
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
   }, []);
+
+  async function addItemToCasket(dishID, numberOfProduct) {
+    console.log(dishID);
+    const resp = await fetch(
+      'http://10.0.2.2:8082/' +
+        getUserName(store.getState().token) +
+        '/usercart/' +
+        dishID +
+        '/save/' +
+        numberOfProduct,
+      {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        }),
+      },
+    );
+    const data = await resp.text();
+    console.log(data);
+    onRefresh();
+    return undefined;
+  }
 
   return (
     <View style={styles.main}>
@@ -78,7 +143,8 @@ export default function Dish() {
             <Text style={styles.textDesc}>{dish.description}</Text>
           </View>
           <View style={styles.button}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => addItemToCasket(dish.dishId, counter)}>
               <View style={styles.rowButton}>
                 {/*<Icon name="cart-plus" style={styles.buttonIcon} />*/}
                 <Text style={styles.buttonText}>Dodaj do koszyka</Text>

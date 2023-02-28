@@ -1,150 +1,170 @@
 import {
   Dimensions,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {getData, storeData} from '../StorageHelper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {COLORS} from '../Colors';
+import store from './store';
+import {getUserName} from '../Utilities';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
 const imageWidth = dimensions.width;
 
-export default function Checkout() {
+export default function Checkout({navigation}) {
   const [currentUser, setCurrentUser] = useState('');
-  const [numberOfProduct, setNumberOfProduct] = useState('');
-  const [dishes, setDishes] = useState('');
+  const [cartItems, setCartItems] = useState([]);
   const [productId, setProductId] = useState('');
-  const [jwt, setJwt] = useState('');
-  const [counter, setCounter] = useState(0);
-  getData('JWT').then(r => {
-    setJwt(r);
-  });
-
-  function addItem() {
-    setCounter(counter + 1);
-  }
-  function deleteItem() {
-    if (counter !== 0) {
-      setCounter(counter - 1);
-    }
-  }
-  async function getCart() {
-    const resp = await fetch('http://10.0.2.2:8082/broniq/usercart?p=0', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + jwt,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      }),
-    });
-    const data = await resp.text();
-    setJwt(data);
-    console.log(data);
-  }
-  async function addItemToCart() {
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
     const resp = await fetch(
       'http://10.0.2.2:8082/' +
-        currentUser +
+        getUserName(store.getState().token) +
+        '/usercart?p=0',
+      {
+        method: 'GET',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        }),
+      },
+    );
+    const text = await resp.text();
+    let data = JSON.parse(text);
+    setCartItems(data.content);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getCart();
+    });
+    async function getCart() {
+      const resp = await fetch(
+        'http://10.0.2.2:8082/' +
+          getUserName(store.getState().token) +
+          '/usercart?p=0',
+        {
+          method: 'GET',
+          headers: new Headers({
+            Authorization: 'Bearer ' + store.getState().token,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }),
+        },
+      );
+      const text = await resp.text();
+      let data = JSON.parse(text);
+      setCartItems(data.content);
+    }
+    getCart();
+    return unsubscribe;
+  }, [navigation]);
+  async function addItem(id, numberOfProduct) {
+    const resp = await fetch(
+      'http://10.0.2.2:8082/' +
+        getUserName(store.getState().token) +
         '/usercart/' +
-        productId +
+        id +
         '/save/' +
         numberOfProduct,
       {
         method: 'POST',
         headers: new Headers({
-          Authorization: 'Bearer ' + jwt,
+          Authorization: 'Bearer ' + store.getState().token,
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
     );
     const data = await resp.text();
-    setJwt(data);
     console.log(data);
+    onRefresh();
   }
-  async function deleteItemToCart() {
+  async function deleteItem(id, numberOfProduct) {
     const resp = await fetch(
       'http://10.0.2.2:8082/' +
-        currentUser +
+        getUserName(store.getState().token) +
         '/usercart/' +
-        productId +
-        '/delete/',
+        id +
+        '/save/' +
+        numberOfProduct,
       {
-        method: 'DELETE',
+        method: 'POST',
         headers: new Headers({
-          Authorization: 'Bearer ' + jwt,
+          Authorization: 'Bearer ' + store.getState().token,
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
     );
     const data = await resp.text();
-    setJwt(data);
     console.log(data);
+    onRefresh();
   }
+
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         {/*1 Box*/}
         <View style={styles.box}>
           <View style={[styles.card, styles.elevation]}>
-            <View style={styles.row}>
-              {/*<Image style={styles.image} source={{uri: dish.imageUrl}} />*/}
-              <View style={styles.imageContainer}>
-                <Image style={styles.image} source={require('./food.png')} />
-              </View>
-              <View style={styles.columnWide}>
-                <Text style={styles.title}>KREWETKI KRÓLEWSKIE</Text>
-                <View style={styles.row}>
-                  <TouchableOpacity onPress={() => deleteItem()}>
-                    <Icon name="minus-square" style={styles.icon} />
-                  </TouchableOpacity>
-                  <View style={styles.counter}>
-                    <Text style={styles.counterText}>{counter}</Text>
+            {cartItems.map((item, i) => {
+              return (
+                <View key={i} style={styles.row}>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      style={styles.image}
+                      source={{uri: item.dish.imageUrl}}
+                    />
                   </View>
-                  <TouchableOpacity onPress={() => addItem()}>
-                    <Icon name="plus-square" style={styles.icon} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.title}>20 zł</Text>
-                <Text style={styles.title}>20 zł</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        {/*2 Box*/}
-        <View style={styles.box}>
-          <View style={[styles.card, styles.elevation]}>
-            <View style={styles.row}>
-              {/*<Image style={styles.image} source={{uri: dish.imageUrl}} />*/}
-              <View style={styles.imageContainer}>
-                <Image style={styles.image} source={require('./food.png')} />
-              </View>
-              <View style={styles.columnWide}>
-                <Text style={styles.title}>CHEESE BURGER</Text>
-                <View style={styles.row}>
-                  <TouchableOpacity onPress={() => deleteItem()}>
-                    <Icon name="minus-square" style={styles.icon} />
-                  </TouchableOpacity>
-                  <View style={styles.counter}>
-                    <Text style={styles.counterText}>{counter}</Text>
+                  <View style={styles.columnWide}>
+                    <Text style={styles.title}>{item.dish.name}</Text>
+                    <View style={styles.row}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          deleteItem(
+                            item.dish.dishId,
+                            parseInt(item.countOfDish) - 1,
+                          )
+                        }>
+                        <Icon name="minus-square" style={styles.icon} />
+                      </TouchableOpacity>
+                      <View style={styles.counter}>
+                        <Text style={styles.counterText}>
+                          {item.countOfDish}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() =>
+                          addItem(
+                            item.dish.dishId,
+                            parseInt(item.countOfDish) + 1,
+                          )
+                        }>
+                        <Icon name="plus-square" style={styles.icon} />
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                  <TouchableOpacity onPress={() => addItem()}>
-                    <Icon name="plus-square" style={styles.icon} />
-                  </TouchableOpacity>
+                  <View style={styles.column}>
+                    <Text style={styles.title}>{item.dish.price}zl</Text>
+                    <Text style={styles.title}>
+                      {parseInt(item.countOfDish) * parseInt(item.dish.price)}zl
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.title}>20 zł</Text>
-                <Text style={styles.title}>20 zł</Text>
-              </View>
-            </View>
+              );
+            })}
           </View>
         </View>
       </ScrollView>
@@ -224,12 +244,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    width: imageWidth/6,
-    height: imageHeight/5,
+    width: imageWidth / 6,
+    height: imageHeight / 5,
   },
   image: {
-    width: imageWidth/6,
-    height: imageHeight/5,
+    width: imageWidth / 6,
+    height: imageHeight / 5,
     margin: 0,
     padding: 0,
   },
