@@ -6,7 +6,8 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-  ImageBackground, ScrollView,
+  ImageBackground,
+  ScrollView,
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import {storeData} from '../StorageHelper';
@@ -81,8 +82,13 @@ export default function Login({navigation}) {
           {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
           <View style={styles.column}>
             <Text style={styles.textWelcome}>Witaj w Szama(nie)!</Text>
-            <Image style={styles.logo} source={require('../Screens/logo.png')} />
-            <Text style={styles.textWelcome2}>Zaloguj się, aby kontynuować.</Text>
+            <Image
+              style={styles.logo}
+              source={require('../Screens/food.png')}
+            />
+            <Text style={styles.textWelcome2}>
+              Zaloguj się, aby kontynuować.
+            </Text>
           </View>
         </View>
         <View style={styles.box}>
@@ -131,7 +137,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    backgroundColor: COLORS.fourthOrange,
+    backgroundColor: COLORS.mainBrown,
   },
   box: {
     justifyContent: 'center',
@@ -173,13 +179,13 @@ const styles = StyleSheet.create({
   },
   textWelcome: {
     textAlign: 'center',
-    color: COLORS.mainBrown,
+    color: COLORS.mainOrange2,
     fontSize: 24,
     fontWeight: 800,
   },
   textWelcome2: {
     textAlign: 'center',
-    color: COLORS.mainBrown,
+    color: COLORS.mainOrange2,
     fontSize: 12,
     fontWeight: 800,
   },

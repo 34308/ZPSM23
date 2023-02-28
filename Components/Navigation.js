@@ -15,7 +15,7 @@ import Dish from './Screens/Dish';
 import Login from './Screens/Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Checkout from './Screens/Checkout';
-import {Image} from 'react-native';
+import {Image, View} from 'react-native';
 import {loginReducer} from './Reducer';
 import {LOGIN, LOGOUT} from './actions';
 import {Provider as StoreProvider, useDispatch} from 'react-redux';
@@ -60,22 +60,27 @@ function Navigation() {
       <DrawerContentScrollView {...props}>
         {/*//przed lista z Drawer Part*/}
         {/*Tymczasowe style*/}
-        <Image
+        <View
           style={{
-            height: 100,
-            width: 100,
             justifyContent: 'center',
             display: 'flex',
             flexDirection: 'column',
             flexWrap: 'wrap',
             alignItems: 'center',
             alignContent: 'center',
-            marginLeft: 85,
-            marginBottom: 20,
-            marginTop: 10,
-          }}
-          source={require('./Screens/logo.png')}
-        />
+            margin: 10,
+            borderBottomWidth: 1,
+            borderColor: COLORS.mainBrown,
+          }}>
+          <Image
+            style={{
+              height: 100,
+              width: 100,
+              marginBottom: 10,
+            }}
+            source={require('./Screens/logo.png')}
+          />
+        </View>
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
         {store.getState() ? (
@@ -97,8 +102,8 @@ function Navigation() {
           headerPressColor: COLORS.lightOrangeButton,
           headerShadowVisible: true,
           headerTintColor: COLORS.mainBrown,
-          drawerActiveBackgroundColor: COLORS.fourthOrange,
-          drawerActiveTintColor: COLORS.mainBrown,
+          drawerActiveBackgroundColor: COLORS.mainBrown,
+          drawerActiveTintColor: COLORS.mainOrange2,
           drawerInactiveTintColor: '#333',
           drawerLabelStyle: {
             fontFamily: 'Poppins-Regular',
@@ -115,7 +120,7 @@ function Navigation() {
               <Icon
                 name="user-circle-o"
                 size={size - 3}
-                color={focused ? COLORS.mainBrown : '#ccc'}
+                color={focused ? COLORS.mainOrange2 : '#ccc'}
               />
             ),
           }}
@@ -129,7 +134,7 @@ function Navigation() {
               <Icon
                 name="home"
                 size={size - 2}
-                color={focused ? COLORS.mainBrown : '#ccc'}
+                color={focused ? COLORS.mainOrange2 : '#ccc'}
               />
             ),
           }}
@@ -144,7 +149,7 @@ function Navigation() {
                 <Icon
                   name="shopping-cart"
                   size={size - 2}
-                  color={focused ? COLORS.mainBrown : '#ccc'}
+                  color={focused ? COLORS.mainOrange2 : '#ccc'}
                 />
               ),
             }}
@@ -159,7 +164,7 @@ function Navigation() {
                 <Icon
                   name="user-plus"
                   size={size - 4}
-                  color={focused ? COLORS.mainBrown : '#ccc'}
+                  color={focused ? COLORS.mainOrange2 : '#ccc'}
                 />
               ),
             }}

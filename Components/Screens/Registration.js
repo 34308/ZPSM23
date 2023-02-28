@@ -172,8 +172,8 @@ export default function Registration({navigation}) {
               <Text style={styles.textWelcome}>Zarejestruj się!</Text>
               <TouchableOpacity
                 onPress={() => changePage(false)}
-                style={styles.button}>
-                <Text style={styles.text}>Wstecz</Text>
+                style={styles.buttonBack}>
+                <Text style={styles.textBack}>Wstecz</Text>
               </TouchableOpacity>
               {/*<Image*/}
               {/*  style={styles.logo}*/}
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    backgroundColor: COLORS.fourthOrange,
+    backgroundColor: COLORS.mainBrown,
   },
   box: {
     justifyContent: 'center',
@@ -299,13 +299,26 @@ const styles = StyleSheet.create({
     borderColor: COLORS.thirdOrange,
     backgroundColor: COLORS.mainBrown,
   },
+  buttonBack: {
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+    padding: 10,
+    width: 250,
+    borderRadius: 5,
+    borderColor: COLORS.thirdOrange,
+    backgroundColor: COLORS.mainOrange2,
+  },
   text: {
     textAlign: 'center',
     color: 'white',
   },
-  textWelcome: {
+  textBack: {
     textAlign: 'center',
     color: COLORS.mainBrown,
+  },
+  textWelcome: {
+    textAlign: 'center',
+    color: COLORS.mainOrange2,
     fontSize: 24,
     fontWeight: 800,
     margin: 20,

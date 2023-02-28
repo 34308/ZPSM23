@@ -19,14 +19,14 @@ const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
 const imageWidth = dimensions.width;
 
-export default function Dishes() {
+export default function Dishes({navigation}) {
   const [dishes, setDishes] = useState([]);
   // const [isPressed, setPressed] = useState('');
   const route = useRoute();
+  const url = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantUrl;
+  const restaurantName = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
 
   useEffect(() => {
-    const url =
-      'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
     const fetchData = async () => {
       try {
         const resp = await fetch(url);
@@ -38,6 +38,14 @@ export default function Dishes() {
     };
     fetchData();
   }, []);
+
+  function goToDish(dishUrl) {
+    console.log('DishUrl navigate: ' + dishUrl);
+    navigation.navigate('Dish', {
+      dishUrl: dishUrl,
+    });
+  }
+  //http://localhost:8082/restaurants/Restauracja%20u%20Jana/dishes/KREWETKI%20KR%C3%93LEWSKIE
 
   return (
     <View style={styles.container}>
@@ -55,9 +63,12 @@ export default function Dishes() {
           return (
             <View key={i + item.dishId}>
               <View style={styles.row}>
-                <View style={styles.imageContainer}>
-                  <Image style={styles.image} source={{uri: item.imageUrl}} />
-                </View>
+                <TouchableOpacity
+                  onPress={() => goToDish(restaurantName + '/dishes/' + item.name)}>
+                  <View style={styles.imageContainer}>
+                    <Image style={styles.image} source={{uri: item.imageUrl}} />
+                  </View>
+                </TouchableOpacity>
 
                 <View style={styles.column}>
                   <Text style={styles.textTitle}>{item.name}</Text>
@@ -120,7 +131,8 @@ const styles = StyleSheet.create({
   },
   textPrice: {
     fontSize: 16,
-    color: 'black',
+    color: COLORS.mainOrange2,
+    fontWeight: 800,
     marginTop: 50,
   },
   column: {
@@ -146,7 +158,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     width: 35,
     borderRadius: 5,
-    backgroundColor: COLORS.lightOrangeButton,
+    backgroundColor: COLORS.mainBrown,
   },
   searchBar: {
     justifyContent: 'flex-start',
