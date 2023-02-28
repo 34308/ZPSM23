@@ -6,6 +6,8 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  ImageBackground,
+  ScrollView,
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import {storeData} from '../StorageHelper';
@@ -74,42 +76,70 @@ export default function Login({navigation}) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Image style={styles.logo} source={require('../Screens/logo.jpg')} />
-        <Text style={styles.textInput}>Login</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={setLogin}
-          value={login}
-          // placeholder="Login"
-          keyboardType="default"
-        />
-        <Text style={styles.textInput}>Hasło</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={setPassword}
-          value={password}
-          // placeholder="Hasło"
-          keyboardType="default"
-          secureTextEntry={true}
-        />
-        <TouchableOpacity style={styles.button} onPress={ValidateFields}>
-          <Text style={styles.text}>Zaloguj się</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.register} onPress={goToRegister}>
-            Nie masz konta? Zarejestruj się.
-          </Text>
-        </TouchableOpacity>
+    <ScrollView style={styles.container}>
+      <View style={styles.section}>
+        <View style={styles.logoContainer}>
+          {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
+          <View style={styles.column}>
+            <Text style={styles.textWelcome}>Witaj w Szama(nie)!</Text>
+            <Image
+              style={styles.logo}
+              source={require('../Screens/food.png')}
+            />
+            <Text style={styles.textWelcome2}>
+              Zaloguj się, aby kontynuować.
+            </Text>
+          </View>
+        </View>
+        <View style={styles.box}>
+          <View>
+            <Text style={styles.textInput}>Login</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setLogin}
+              value={login}
+              // placeholder="Login"
+              keyboardType="default"
+            />
+            <Text style={styles.textInput}>Hasło</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={setPassword}
+              value={password}
+              // placeholder="Hasło"
+              keyboardType="default"
+              secureTextEntry={true}
+            />
+            <TouchableOpacity style={styles.button} onPress={ValidateFields}>
+              <Text style={styles.text}>Zaloguj się</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.register} onPress={goToRegister}>
+                Nie masz konta? Zarejestruj się.
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
+  },
+  section: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    alignContent: 'center',
+    backgroundColor: COLORS.mainBrown,
+  },
+  box: {
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
@@ -117,12 +147,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     backgroundColor: 'white',
+    width: '100%',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    padding: 20,
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  column: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    alignContent: 'center',
   },
   button: {
     justifyContent: 'center',
     borderBottomWidth: 1,
     padding: 10,
     margin: 20,
+    width: 250,
     borderRadius: 5,
     borderColor: COLORS.thirdOrange,
     backgroundColor: COLORS.mainBrown,
@@ -130,6 +176,18 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     color: 'white',
+  },
+  textWelcome: {
+    textAlign: 'center',
+    color: COLORS.mainOrange2,
+    fontSize: 24,
+    fontWeight: 800,
+  },
+  textWelcome2: {
+    textAlign: 'center',
+    color: COLORS.mainOrange2,
+    fontSize: 12,
+    fontWeight: 800,
   },
   textInput: {
     fontSize: 16,
@@ -151,18 +209,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
-    width: 250,
+    width: 200,
     height: 150,
-    marginBottom: 20,
-    marginTop: -60,
+    resizeMode: 'contain',
   },
   logoContainer: {
-    // justifyContent: 'center',
-    // display: 'flex',
-    // flexDirection: 'column',
-    // flexWrap: 'wrap',
-    // alignItems: 'center',
-    // alignContent: 'center',
+    margin: 10,
+    padding: 10,
   },
   register: {
     textAlign: 'center',

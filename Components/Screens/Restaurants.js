@@ -29,7 +29,8 @@ export default function Restaurants({navigation}) {
   function goToRestaurant(restaurantName) {
     console.log('Restaurant navigate: ' + restaurantName);
     navigation.navigate('Dishes', {
-      restaurantName: restaurantName + '/dishes?p=1',
+      restaurantUrl: restaurantName + '/dishes?p=1',
+      restaurantName: restaurantName,
     });
   }
 
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     borderRadius: 5,
     // borderColor: COLORS.mainOrange,
-    // backgroundColor: COLORS.secondOrange,
+    backgroundColor: COLORS.lightOrangeButton,
     margin: 30,
   },
   image: {

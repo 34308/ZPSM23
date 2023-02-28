@@ -14,7 +14,7 @@ import Dish from './Screens/Dish';
 import Login from './Screens/Login';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Checkout from './Screens/Checkout';
-import {Image} from 'react-native';
+import {Image, View} from 'react-native';
 import {loginReducer} from './Reducer';
 import {LOGIN, LOGOUT} from './actions';
 import { useDispatch} from 'react-redux';
@@ -23,6 +23,7 @@ import jwtDecode from 'jwt-decode';
 import {getData} from './StorageHelper';
 import {isTokenExp} from './Utilities';
 import {COLORS} from './Colors';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function Navigation() {
   const Drawer = createDrawerNavigator();
@@ -70,10 +71,28 @@ function Navigation() {
     return (
       <DrawerContentScrollView {...props}>
         {/*//przed lista z Drawer Part*/}
-        <Image
-          style={{height: 30, width: 30}}
-          source={{uri: 'https://reactnative.dev/img/tiny_logo.png'}}
-        />
+        {/*Tymczasowe style*/}
+        <View
+          style={{
+            justifyContent: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            alignContent: 'center',
+            margin: 10,
+            borderBottomWidth: 1,
+            borderColor: COLORS.mainBrown,
+          }}>
+          <Image
+            style={{
+              height: 100,
+              width: 100,
+              marginBottom: 10,
+            }}
+            source={require('./Screens/logo.png')}
+          />
+        </View>
         <DrawerItemList {...props} />
         {/*//po liscie z Drawer Part*/}
         {store.getState().loggedIn ? (
@@ -86,7 +105,6 @@ function Navigation() {
     dispatch({
       type: LOGOUT,
     });
-
   }
   function DrawerPart() {
     return (
@@ -95,8 +113,8 @@ function Navigation() {
           headerPressColor: COLORS.lightOrangeButton,
           headerShadowVisible: true,
           headerTintColor: COLORS.mainBrown,
-          drawerActiveBackgroundColor: COLORS.secondOrange,
-          drawerActiveTintColor: COLORS.mainBrown,
+          drawerActiveBackgroundColor: COLORS.mainBrown,
+          drawerActiveTintColor: COLORS.mainOrange2,
           drawerInactiveTintColor: '#333',
           drawerLabelStyle: {
             fontFamily: 'Poppins-Regular',
@@ -106,12 +124,64 @@ function Navigation() {
         }}
         initialRouteName="Login"
         drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Login" component={Login} />
-        <Drawer.Screen name="Restaurants" component={Restaurants} />
-        {store.getState().loggedIn ? (
-          <Drawer.Screen name="Checkout" component={Checkout} />
+        <Drawer.Screen
+          options={{
+            title: 'Zaloguj się',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="user-circle-o"
+                size={size - 3}
+                color={focused ? COLORS.mainOrange2 : '#ccc'}
+              />
+            ),
+          }}
+          name="Login"
+          component={Login}
+        />
+        <Drawer.Screen
+          options={{
+            title: 'Restauracje',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="home"
+                size={size - 2}
+                color={focused ? COLORS.mainOrange2 : '#ccc'}
+              />
+            ),
+          }}
+          name="Restaurants"
+          component={Restaurants}
+        />
+        {store.getState() ? (
+          <Drawer.Screen
+            options={{
+              title: 'Koszyk',
+              drawerIcon: ({focused, size}) => (
+                <Icon
+                  name="shopping-cart"
+                  size={size - 2}
+                  color={focused ? COLORS.mainOrange2 : '#ccc'}
+                />
+              ),
+            }}
+            name="Checkout"
+            component={Checkout}
+          />
         ) : (
-          <Drawer.Screen name="Registrations" component={Registration} />
+          <Drawer.Screen
+            options={{
+              title: 'Utwórz konto',
+              drawerIcon: ({focused, size}) => (
+                <Icon
+                  name="user-plus"
+                  size={size - 4}
+                  color={focused ? COLORS.mainOrange2 : '#ccc'}
+                />
+              ),
+            }}
+            name="Registrations"
+            component={Registration}
+          />
         )}
       </Drawer.Navigator>
     );
