@@ -117,10 +117,11 @@ export default function Checkout({navigation}) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {/*1 Box*/}
-        <View style={styles.box}>
-          <View style={[styles.card, styles.elevation]}>
-            {cartItems.map((item, i) => {
-              return (
+
+        {cartItems.map((item, i) => {
+          return (
+            <View style={styles.box}>
+              <View style={[styles.card, styles.elevation]}>
                 <View key={i} style={styles.row}>
                   <View style={styles.imageContainer}>
                     <Image
@@ -163,10 +164,10 @@ export default function Checkout({navigation}) {
                     </Text>
                   </View>
                 </View>
-              );
-            })}
-          </View>
-        </View>
+              </View>
+            </View>
+          );
+        })}
       </ScrollView>
     </View>
   );

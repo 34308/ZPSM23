@@ -30,7 +30,6 @@ import {COLORS} from './Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 function Navigation() {
   const Drawer = createDrawerNavigator();
   const dispatch = useDispatch();
@@ -106,7 +105,7 @@ function Navigation() {
         {store.getState().isLoggedIn ? (
           <View>
             <DrawerItem
-              onPress={LogOut}
+              onPress={() => LogOut(props.navigation)}
               label="Logout"
               labelStyle={{fontSize: 15, color: 'black', fontWeight: 'normal'}}
               icon={() => <Ionicons name="exit" size={22} color="#ccc" />}
@@ -116,10 +115,11 @@ function Navigation() {
       </DrawerContentScrollView>
     );
   }
-  function LogOut() {
+  function LogOut(navigation) {
     dispatch({
       type: LOGOUT,
     });
+    navigation.navigate('Restaurants');
   }
   function DrawerPart() {
     return (
