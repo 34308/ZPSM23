@@ -56,7 +56,7 @@ export default function Login({navigation}) {
         }),
       }).then(async response => {
         const data = await response.text();
-        dispatch({type: LOGIN, payload: '' + data});
+        dispatch({type: LOGIN, payload: '' + JSON.parse(data).value});
         goToRestaurants();
       });
     } catch (error) {

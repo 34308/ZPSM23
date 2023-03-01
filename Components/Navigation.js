@@ -1,4 +1,8 @@
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  useNavigation,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -104,7 +108,7 @@ function Navigation() {
             <DrawerItem
               onPress={LogOut}
               label="Logout"
-              labelStyle={{fontSize: 15, color: 'black', fontWeight: 400}}
+              labelStyle={{fontSize: 15, color: 'black', fontWeight: 'normal'}}
               icon={() => <Ionicons name="exit" size={22} color="#ccc" />}
             />
           </View>
@@ -133,8 +137,23 @@ function Navigation() {
           },
           itemStyle: {flex: 1, marginVertical: 5},
         }}
-        initialRouteName="Login"
+        initialRouteName="Restaurants"
         drawerContent={props => <CustomDrawerContent {...props} />}>
+        <Drawer.Screen
+          options={{
+            title: 'Restauracje',
+            drawerIcon: ({focused, size}) => (
+              <Icon
+                name="home"
+                size={size - 2}
+                color={focused ? COLORS.main : '#ccc'}
+              />
+            ),
+          }}
+          name="Restaurants"
+          component={Restaurants}
+        />
+
         {store.getState().isLoggedIn ? (
           <Drawer.Screen
             options={{
@@ -167,20 +186,6 @@ function Navigation() {
           />
         )}
 
-        <Drawer.Screen
-          options={{
-            title: 'Restauracje',
-            drawerIcon: ({focused, size}) => (
-              <Icon
-                name="home"
-                size={size - 2}
-                color={focused ? COLORS.main : '#ccc'}
-              />
-            ),
-          }}
-          name="Restaurants"
-          component={Restaurants}
-        />
         {store.getState().isLoggedIn ? (
           <Drawer.Screen
             options={{

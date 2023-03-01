@@ -6,7 +6,7 @@ const token = getData('JWT');
 let initialState;
 
 if (token) {
-  initialState = {isLoggedIn: true, token};
+  initialState = {isLoggedIn: false, token};
 } else {
   initialState = {isLoggedIn: false};
 }
