@@ -84,7 +84,7 @@ export default function Login({navigation}) {
             <Text style={styles.textWelcome}>Witaj w Szama(nie)!</Text>
             <Image
               style={styles.logo}
-              source={require('../Screens/food.png')}
+              source={require('../Screens/logo.png')}
             />
             <Text style={styles.textWelcome2}>
               Zaloguj się, aby kontynuować.

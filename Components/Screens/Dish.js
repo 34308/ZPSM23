@@ -242,8 +242,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: 800,
     textAlign: 'center',
-    fontSize: 26,
-    color: COLORS.main,
+    fontSize: 22,
+    color: COLORS.second,
   },
   imageContainer: {
     justifyContent: 'center',

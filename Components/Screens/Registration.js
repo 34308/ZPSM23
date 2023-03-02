@@ -141,7 +141,7 @@ export default function Registration({navigation}) {
                 />
                 <Text style={styles.textInput}>Powtórz Hasło</Text>
                 <TextInput
-                  value={password}
+                  value={passwordRepeat}
                   // placeholder="Password"
                   onChangeText={setPasswordRepeat}
                   style={styles.input}
