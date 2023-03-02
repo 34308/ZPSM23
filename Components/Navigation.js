@@ -25,7 +25,7 @@ import {JWT, LOGIN, LOGOUT} from './actions';
 import {useDispatch} from 'react-redux';
 import store from './Screens/store';
 import {getData} from './StorageHelper';
-import {isTokenExp} from './Utilities';
+import {isTokenExp, LogOut} from './Utilities';
 import {COLORS} from './Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -105,7 +105,7 @@ function Navigation() {
         {store.getState().isLoggedIn ? (
           <View>
             <DrawerItem
-              onPress={() => LogOut(props.navigation)}
+              onPress={() => LogOut(props.navigation, dispatch)}
               label="Logout"
               labelStyle={{fontSize: 15, color: 'black', fontWeight: 'normal'}}
               icon={() => <Ionicons name="exit" size={22} color="#ccc" />}
@@ -114,12 +114,6 @@ function Navigation() {
         ) : null}
       </DrawerContentScrollView>
     );
-  }
-  function LogOut(navigation) {
-    dispatch({
-      type: LOGOUT,
-    });
-    navigation.navigate('Restaurants');
   }
   function DrawerPart() {
     return (

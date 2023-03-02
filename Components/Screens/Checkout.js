@@ -23,8 +23,9 @@ const imageWidth = dimensions.width;
 export default function Checkout({navigation}) {
   const [currentUser, setCurrentUser] = useState('');
   const [cartItems, setCartItems] = useState([]);
-  const [productId, setProductId] = useState('');
+  const [productPrice, setProductPrice] = useState('');
   const [refreshing, setRefreshing] = React.useState(false);
+  const moneyForDelivery = 15;
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const resp = await fetch(
@@ -39,9 +40,19 @@ export default function Checkout({navigation}) {
         }),
       },
     );
-    const text = await resp.text();
-    let data = JSON.parse(text);
-    setCartItems(data.content);
+    if (resp.ok) {
+      const text = await resp.text();
+      let data = JSON.parse(text);
+      setCartItems(data.content);
+      setProductPrice(
+        data.content.reduce((a, c) => {
+          return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
+        }, 0),
+      );
+    } else {
+      setCartItems([]);
+    }
+
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
@@ -63,13 +74,50 @@ export default function Checkout({navigation}) {
           }),
         },
       );
-      const text = await resp.text();
-      let data = JSON.parse(text);
-      setCartItems(data.content);
+      if (resp.ok) {
+        const text = await resp.text();
+        let data = JSON.parse(text);
+        setCartItems(data.content);
+        setProductPrice(
+          data.content.reduce((a, c) => {
+            return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
+          }, 0),
+        );
+      } else {
+        setCartItems([]);
+      }
     }
     getCart();
     return unsubscribe;
   }, [navigation]);
+
+  async function checkOut() {
+    console.log('test1');
+    const resp = await fetch(
+      'http://10.0.2.2:8082/' +
+        getUserName(store.getState().token) +
+        '/usercart/checkout',
+
+      {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify({
+          note: '',
+          delivery: true,
+        }),
+      },
+    );
+    console.log('test');
+    if (resp.ok) {
+      alert('Zanówienie przebiegło poprawnie ,dziekujemy za zakupy');
+    } else {
+      console.log(await resp.text());
+      alert('Coś się stało... przepraszamy', resp.headers);
+    }
+  }
   async function addItem(id, numberOfProduct) {
     const resp = await fetch(
       'http://10.0.2.2:8082/' +
@@ -121,9 +169,9 @@ export default function Checkout({navigation}) {
 
         {cartItems.map((item, i) => {
           return (
-            <View style={styles.box}>
+            <View key={i} style={styles.box}>
               <View style={[styles.card, styles.elevation]}>
-                <View key={i} style={[styles.row, styles.border]}>
+                <View style={[styles.row, styles.border]}>
                   <View style={styles.column}>
                     <View style={styles.imageContainer}>
                       <Image
@@ -184,13 +232,15 @@ export default function Checkout({navigation}) {
               <Text style={styles.totalText}>Suma: </Text>
             </View>
             <View style={styles.rightBox}>
-              <Text style={styles.priceText}>90zł</Text>
-              <Text style={styles.priceText}>10zł</Text>
-              <Text style={styles.totalText}>100zł</Text>
+              <Text style={styles.priceText}>{productPrice}zl</Text>
+              <Text style={styles.priceText}>{moneyForDelivery}zl</Text>
+              <Text style={styles.totalText}>
+                {productPrice + moneyForDelivery}zl
+              </Text>
             </View>
           </View>
           <View style={styles.box}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity onPress={() => checkOut()} style={styles.button}>
               <Text style={styles.buttonText}>Zamów</Text>
             </TouchableOpacity>
           </View>

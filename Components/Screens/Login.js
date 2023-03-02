@@ -55,9 +55,13 @@ export default function Login({navigation}) {
           password: '' + password,
         }),
       }).then(async response => {
-        const data = await response.text();
-        dispatch({type: LOGIN, payload: '' + JSON.parse(data).value});
-        goToRestaurants();
+        if (response.ok) {
+          const data = await response.text();
+          dispatch({type: LOGIN, payload: '' + JSON.parse(data).value});
+          goToRestaurants();
+        } else {
+          alert('Login Not Succesfull, wrong login or password');
+        }
       });
     } catch (error) {
       console.error(error);

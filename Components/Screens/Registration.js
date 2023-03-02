@@ -71,7 +71,7 @@ export default function Registration({navigation}) {
       alert('Hasła się nie zgadzają.');
     } else {
       try {
-        // await Register();
+        Register();
         alert('User added.');
         GoToLogin();
       } catch (error) {
@@ -100,6 +100,9 @@ export default function Registration({navigation}) {
           email: email.toString(),
         }),
       }).then(r => {
+        if (!r.ok) {
+          alert('niepoprawne logowanie blad serwera');
+        }
         console.log(r.status);
       });
     } catch (error) {

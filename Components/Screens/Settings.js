@@ -2,7 +2,7 @@ import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import {COLORS} from '../Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {getUserName} from '../Utilities';
+import {getUserName, LogOut} from '../Utilities';
 import store from './store';
 
 export default function Settings({navigation}) {
@@ -28,13 +28,20 @@ export default function Settings({navigation}) {
     let user = getUserName(store.getState().token);
     let url = 'http://10.0.2.2:8082/' + user + '/user/delete';
     try {
-      await fetch(url, {method: 'DELETE'});
-      navigation.navigate('Restaurants');
+      await fetch(url, {
+        method: 'DELETE',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        }),
+      });
+      LogOut(navigation, store.dispatch);
       console.log('Delete successful.');
     } catch (error) {
       console.log('Error while deleting account.');
     }
   }
+
   return (
     <View style={styles.container}>
       <View style={styles.box}>

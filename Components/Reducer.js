@@ -15,6 +15,7 @@ export default function loginReducer(state = initialState, action) {
   const {type, payload} = action;
   switch (type) {
     case LOGIN:
+
       storeData('JWT', payload);
       return {
         ...state,
