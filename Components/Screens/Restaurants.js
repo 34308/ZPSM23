@@ -34,7 +34,6 @@ export default function Restaurants({navigation}) {
     });
   }
 
-  //Restauracja%20u%20Jana
   useEffect(() => {
     const url = 'http://10.0.2.2:8082/restaurants';
     const fetchData = async () => {
@@ -61,29 +60,6 @@ export default function Restaurants({navigation}) {
               <TouchableOpacity onPress={() => goToRestaurant(item.name)}>
                 <Image style={styles.image} source={{uri: item.imageUrl}} />
                 <View style={styles.line} />
-                {/*<Text style={styles.text} key={item.name + i}>*/}
-                {/*  {item.name}*/}
-                {/*</Text>*/}
-                {/*<Image*/}
-                {/*  style={styles.image}*/}
-                {/*  // style={{*/}
-                {/*  //   width: null,*/}
-                {/*  //   height: null,*/}
-                {/*  //   flex: 1,*/}
-                {/*  //   borderRadius: 15,*/}
-                {/*  //   alignSelf: 'center', //add this*/}
-                {/*  //   // flex: 1,*/}
-                {/*  //   // // resizeMode: 'cover',*/}
-                {/*  //   // width: 350,*/}
-                {/*  //   // height: 400,*/}
-                {/*  //   // padding: 30,*/}
-                {/*  //   // width: "100%",*/}
-                {/*  //   // height: 350,*/}
-                {/*  //   // resizeMode: 'cover',*/}
-                {/*  //   // margin: -20,*/}
-                {/*  // }}*/}
-                {/*  source={{uri: item.imageUrl}}*/}
-                {/*/>*/}
               </TouchableOpacity>
             </View>
           );

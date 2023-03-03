@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -29,6 +30,11 @@ export default function Checkout({navigation}) {
   const moneyForDelivery = 15;
   const [note, setNote] = React.useState('brak');
   const [isEmpty, empty] = React.useState(false);
+
+  function show() {
+    alert(note);
+  }
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const resp = await fetch(
@@ -55,6 +61,7 @@ export default function Checkout({navigation}) {
         }, 0),
       );
     } else {
+      empty(true);
       setCartItems([]);
     }
 
@@ -90,6 +97,7 @@ export default function Checkout({navigation}) {
           }, 0),
         );
       } else {
+        empty(true);
         setCartItems([]);
       }
     }
@@ -196,8 +204,40 @@ export default function Checkout({navigation}) {
     console.log(data);
     onRefresh();
   }
+  async function deleteItemFromCart(dishId) {
+    const resp = await fetch(
+      'http://10.0.2.2:8082/' +
+        getUserName(store.getState().token) +
+        '/usercart/' +
+        dishId +
+        '/remove',
+      {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        }),
+      },
+    );
+    const data = await resp.text();
+    console.log(data);
+    onRefresh();
+  }
+  //Zabezpieczenie przed ujemną liczbą dań
+  function decreaseNumberOfItems(dishId, countOfDish) {
+    console.warn('!!!!!!!!!!!!!!!!countofDish:'+countOfDish);
+    if (countOfDish > 0) {
+      deleteItem(dishId, parseInt(countOfDish) - 1);
+    } else if (countOfDish === 0) {
+      deleteItemFromCart(dishId);
+    }
+  }
 
-  return (
+  return isEmpty ? (
+    <View style={styles.container}>
+      <Text style={styles.emptyText}>Brak dań.</Text>
+    </View>
+  ) : (
     <View style={styles.container}>
       <ScrollView
         refreshControl={
@@ -231,9 +271,9 @@ export default function Checkout({navigation}) {
                     <View style={styles.column}>
                       <TouchableOpacity
                         onPress={() =>
-                          deleteItem(
+                          decreaseNumberOfItems(
                             item.dish.dishId,
-                            parseInt(item.countOfDish) - 1,
+                            item.countOfDish,
                           )
                         }>
                         <AntDesignIcon name="minus" style={styles.icon} />
@@ -263,6 +303,19 @@ export default function Checkout({navigation}) {
           );
         })}
         <View style={[styles.box, styles.marginBox]}>
+          <Text style={styles.infoText}>Dodatkowe informacje</Text>
+          <View style={styles.inputMargin}>
+            <View style={[styles.card, styles.elevation]}>
+              <TextInput
+                style={styles.input}
+                value={note}
+                multiline={true}
+                onChangeText={setNote}
+                placeholder="Informacje do zamówienia."
+                keyboardType="default"
+              />
+            </View>
+          </View>
           <View style={styles.row}>
             <View>
               <Text style={styles.priceText}>Razem: </Text>
@@ -450,5 +503,20 @@ const styles = StyleSheet.create({
   marginBox: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  input: {
+    marginLeft: 10,
+  },
+  inputMargin: {
+    marginBottom: 20,
+  },
+  infoText: {
+    textAlign: 'center',
+    color: COLORS.second,
+    fontSize: 18,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: COLORS.second,
   },
 });
