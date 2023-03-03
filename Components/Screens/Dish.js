@@ -72,6 +72,7 @@ export default function Dish() {
 
       setCartItems(data2.content);
       if (
+        data2.content !== undefined &&
         data2.content.some(item => {
           return item.dish.name === dish.name;
         })

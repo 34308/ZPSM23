@@ -11,14 +11,11 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {getData, storeData} from '../StorageHelper';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesignIcon from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../Colors';
 import store from './store';
 import {getUserName} from '../Utilities';
 import RNFetchBlob from 'rn-fetch-blob';
-import base64 from 'react-native-base64';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -30,8 +27,8 @@ export default function Checkout({navigation}) {
   const [productPrice, setProductPrice] = useState('');
   const [refreshing, setRefreshing] = React.useState(false);
   const moneyForDelivery = 15;
-  const [pdf, setPdf] = React.useState([]);
-
+  const [note, setNote] = React.useState('brak');
+  const [isEmpty, empty] = React.useState(false);
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const resp = await fetch(
@@ -47,8 +44,10 @@ export default function Checkout({navigation}) {
       },
     );
     if (resp.ok) {
+      empty(false);
       const text = await resp.text();
       let data = JSON.parse(text);
+
       setCartItems(data.content);
       setProductPrice(
         data.content.reduce((a, c) => {
@@ -81,6 +80,7 @@ export default function Checkout({navigation}) {
         },
       );
       if (resp.ok) {
+        empty(false);
         const text = await resp.text();
         let data = JSON.parse(text);
         setCartItems(data.content);
@@ -98,17 +98,16 @@ export default function Checkout({navigation}) {
   }, [navigation]);
 
   async function checkOut() {
+    setRefreshing(true);
+    const date = new Date();
     let dirs = RNFetchBlob.fs.dirs;
     const url =
       'http://10.0.2.2:8082/' +
       getUserName(store.getState().token) +
-      '/usercart/getpdf';
-    const body = JSON.stringify({
-      note: '',
-      delivery: 'true',
-    });
-    const encbody = base64.encode(body);
-    console.log('test');
+      '/usercart/checkout/' +
+      note.replace(' ', '_') +
+      '/true';
+
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       {
@@ -120,9 +119,7 @@ export default function Checkout({navigation}) {
         buttonPositive: 'OK',
       },
     );
-    console.log('test1');
     if (granted) {
-      console.log('test3');
       if (Platform.OS === 'android') {
         RNFetchBlob.config({
           fileCache: false,
@@ -130,23 +127,27 @@ export default function Checkout({navigation}) {
             useDownloadManager: true,
             notification: true,
             mime: 'application/pdf',
-            title: 'DownLoading Your File',
-            description: 'Downloading File',
+            title:
+              'Receipt from ' +
+              date.getDate() +
+              '-' +
+              date.getMonth() +
+              '-' +
+              date.getFullYear(),
+            description: 'Receipt for order in Szama(n)',
             path: dirs.DownloadDir + 'Receipt.pdf',
           },
         })
-          .fetch(
-            'get',
-            url,
-            {
-              Authorization: 'Bearer ' + store.getState().token,
-              'Cache-Control': 'no-store',
-              Accept: 'application/pdf',
-              'Content-Type': 'application/json',
-            },
-
-            encbody,
-          )
+          .fetch('get', url, {
+            Authorization: 'Bearer ' + store.getState().token,
+            'Cache-Control': 'no-store',
+          })
+          .then(res => {
+            setRefreshing(false);
+            onRefresh();
+            setProductPrice(0);
+            empty(true);
+          })
           .catch((errorMessage, statusCode) => {
             console.error(errorMessage, statusCode);
           });
@@ -155,7 +156,6 @@ export default function Checkout({navigation}) {
       alert('Receipt was send on your Email');
     }
   }
-
   async function addItem(id, numberOfProduct) {
     const resp = await fetch(
       'http://10.0.2.2:8082/' +
@@ -278,7 +278,10 @@ export default function Checkout({navigation}) {
             </View>
           </View>
           <View style={styles.box}>
-            <TouchableOpacity onPress={() => checkOut()} style={styles.button}>
+            <TouchableOpacity
+              disabled={isEmpty}
+              onPress={() => checkOut()}
+              style={styles.button}>
               <Text style={styles.buttonText}>Zamów</Text>
             </TouchableOpacity>
           </View>

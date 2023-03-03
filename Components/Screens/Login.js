@@ -57,8 +57,8 @@ export default function Login({navigation}) {
       }).then(async response => {
         if (response.ok) {
           const data = await response.text();
-          console.log(data);
-          dispatch({type: LOGIN, payload: '' +data});
+          const token=JSON.parse(data).value
+          dispatch({type: LOGIN, payload: '' +token});
           goToRestaurants();
         } else {
           alert('Login Not Succesfull, wrong login or password');
