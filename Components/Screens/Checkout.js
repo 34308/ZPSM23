@@ -113,7 +113,7 @@ export default function Checkout({navigation}) {
       'http://10.0.2.2:8082/' +
       getUserName(store.getState().token) +
       '/usercart/checkout/' +
-      note.replace(' ', '_') +
+      note.replaceAll(' ', '_') +
       '/true';
 
     const granted = await PermissionsAndroid.request(
