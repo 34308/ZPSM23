@@ -1,6 +1,8 @@
 import {
   Dimensions,
   Image,
+  PermissionsAndroid,
+  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -15,6 +17,8 @@ import AntDesignIcon from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../Colors';
 import store from './store';
 import {getUserName} from '../Utilities';
+import RNFetchBlob from 'rn-fetch-blob';
+import base64 from 'react-native-base64';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -26,6 +30,8 @@ export default function Checkout({navigation}) {
   const [productPrice, setProductPrice] = useState('');
   const [refreshing, setRefreshing] = React.useState(false);
   const moneyForDelivery = 15;
+  const [pdf, setPdf] = React.useState([]);
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const resp = await fetch(
@@ -92,32 +98,64 @@ export default function Checkout({navigation}) {
   }, [navigation]);
 
   async function checkOut() {
-    console.log('test1');
-    const resp = await fetch(
+    let dirs = RNFetchBlob.fs.dirs;
+    const url =
       'http://10.0.2.2:8082/' +
-        getUserName(store.getState().token) +
-        '/usercart/checkout',
-
+      getUserName(store.getState().token) +
+      '/usercart/getpdf';
+    const body = JSON.stringify({
+      note: '',
+      delivery: 'true',
+    });
+    const encbody = base64.encode(body);
+    console.log('test');
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       {
-        method: 'POST',
-        headers: new Headers({
-          Authorization: 'Bearer ' + store.getState().token,
-          'Content-Type': 'application/json',
-        }),
-        body: JSON.stringify({
-          note: '',
-          delivery: true,
-        }),
+        title: 'Receipt needs to be saved on your device',
+        message:
+          'Receipt needs to be saved on your device if you dont want to save it on your device it will also be send on your email',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
       },
     );
-    console.log('test');
-    if (resp.ok) {
-      alert('Zanówienie przebiegło poprawnie ,dziekujemy za zakupy');
+    console.log('test1');
+    if (granted) {
+      console.log('test3');
+      if (Platform.OS === 'android') {
+        RNFetchBlob.config({
+          fileCache: false,
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            notification: true,
+            mime: 'application/pdf',
+            title: 'DownLoading Your File',
+            description: 'Downloading File',
+            path: dirs.DownloadDir + 'Receipt.pdf',
+          },
+        })
+          .fetch(
+            'get',
+            url,
+            {
+              Authorization: 'Bearer ' + store.getState().token,
+              'Cache-Control': 'no-store',
+              Accept: 'application/pdf',
+              'Content-Type': 'application/json',
+            },
+
+            encbody,
+          )
+          .catch((errorMessage, statusCode) => {
+            console.error(errorMessage, statusCode);
+          });
+      }
     } else {
-      console.log(await resp.text());
-      alert('Coś się stało... przepraszamy', resp.headers);
+      alert('Receipt was send on your Email');
     }
   }
+
   async function addItem(id, numberOfProduct) {
     const resp = await fetch(
       'http://10.0.2.2:8082/' +

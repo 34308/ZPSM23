@@ -29,6 +29,7 @@ export default function Registration({navigation}) {
     navigation.navigate('Login');
     setLogin('');
     setPassword('');
+    setPasswordRepeat('');
     setName('');
     setSurname('');
     setAdress('');
@@ -101,7 +102,7 @@ export default function Registration({navigation}) {
         }),
       }).then(r => {
         if (!r.ok) {
-          alert('niepoprawne logowanie blad serwera');
+          alert('niepoprawna Rejestaracja blad serwera');
         }
         console.log(r.status);
       });
