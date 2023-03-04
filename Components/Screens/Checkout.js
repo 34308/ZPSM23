@@ -26,6 +26,7 @@ export default function Checkout({navigation}) {
   const [currentUser, setCurrentUser] = useState('');
   const [cartItems, setCartItems] = useState([]);
   const [productPrice, setProductPrice] = useState('');
+  const [numberOfRestaurants, setNumberOfRestaurants] = useState(0);
   const [refreshing, setRefreshing] = React.useState(false);
   const moneyForDelivery = 15;
   const [note, setNote] = React.useState('');

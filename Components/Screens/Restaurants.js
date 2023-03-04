@@ -19,6 +19,7 @@ const imageWidth = dimensions.width;
 
 export default function Restaurants({navigation}) {
   const [restaurants, setRestaurants] = useState([]);
+  const [numberOfRestaurants, setNumberOfRestaurants] = useState(0);
   function goToRestaurant(restaurantName) {
     navigation.navigate('Dishes', {
       restaurantUrl: restaurantName + '/dishes?p=0',
@@ -32,6 +33,7 @@ export default function Restaurants({navigation}) {
       try {
         const resp = await fetch(url);
         const data = await resp.json();
+        setNumberOfRestaurants(data.length);
         setRestaurants(data);
       } catch (error) {
         console.log('error', error);
@@ -44,6 +46,9 @@ export default function Restaurants({navigation}) {
   return (
     <View style={styles.container}>
       <ScrollView>
+        <View style={styles.restaurantsNumberBox}>
+          <Text style={styles.restaurantsNumberText}>Zamów z ponad {numberOfRestaurants} restauracji.</Text>
+        </View>
         {restaurants.map((item, i) => {
           return (
             <TouchableOpacity onPress={() => goToRestaurant(item.name)}>
@@ -177,5 +182,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginRight: 10,
+  },
+  restaurantsNumberBox: {
+    justifyContent: 'flex-start',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  restaurantsNumberText: {
+    color: COLORS.second,
+    fontWeight: 800,
+    fontSize: 20,
+    marginTop: 20,
+    marginBottom: 5,
+    marginLeft: 30,
   },
 });
