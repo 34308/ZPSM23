@@ -14,6 +14,8 @@ import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from './store';
 import CookieManager from '@react-native-cookies/cookies';
+import {getUserName} from '../Utilities';
+import {showMessage} from 'react-native-flash-message';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -26,6 +28,34 @@ export default function Dishes({navigation}) {
   const url = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantUrl;
   const restaurantName =
     'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
+
+  async function addItemToCasket(dishID, numberOfProduct) {
+    console.log(dishID);
+    const resp = await fetch(
+      'http://10.0.2.2:8082/' +
+        getUserName(store.getState().token) +
+        '/usercart/' +
+        dishID +
+        '/save/' +
+        numberOfProduct,
+      {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        }),
+      },
+    );
+    const data = await resp.text();
+    console.log(data);
+    showMessage({
+      message: 'Dodano do koszyka.',
+      type: 'info',
+      backgroundColor: COLORS.second,
+      color: COLORS.main,
+    });
+    return undefined;
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,9 +113,12 @@ export default function Dishes({navigation}) {
                   <Text style={styles.textTitle}>CENA</Text>
                   <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
                   {store.getState().isLoggedIn ? (
-                    <View style={styles.plusContainer}>
-                      <Icon name="plus-circle" style={styles.iconPlus} />
-                    </View>
+                    <TouchableOpacity
+                      onPress={() => addItemToCasket(item.dishId, 1)}>
+                      <View style={styles.plusContainer}>
+                        <Icon name="plus-circle" style={styles.iconPlus} />
+                      </View>
+                    </TouchableOpacity>
                   ) : null}
                 </View>
               </View>

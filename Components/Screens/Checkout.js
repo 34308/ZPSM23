@@ -28,7 +28,7 @@ export default function Checkout({navigation}) {
   const [productPrice, setProductPrice] = useState('');
   const [refreshing, setRefreshing] = React.useState(false);
   const moneyForDelivery = 15;
-  const [note, setNote] = React.useState('brak');
+  const [note, setNote] = React.useState('');
   const [isEmpty, empty] = React.useState(false);
 
   function show() {

@@ -6,9 +6,12 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  ImageBackground,
 } from 'react-native';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {COLORS} from '../Colors';
+import {re} from '@babel/core/lib/vendor/import-meta-resolve';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -16,17 +19,6 @@ const imageWidth = dimensions.width;
 
 export default function Restaurants({navigation}) {
   const [restaurants, setRestaurants] = useState([]);
-  // const fetchData = async () => {
-  //   try {
-  //     const resp = await fetch('http://10.0.2.2:8082/restaurants');
-  //     const data = await resp.json();
-  //     console.log(data);
-  //     setRestaurants(data);
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
-
   function goToRestaurant(restaurantName) {
     navigation.navigate('Dishes', {
       restaurantUrl: restaurantName + '/dishes?p=0',
@@ -54,14 +46,38 @@ export default function Restaurants({navigation}) {
       <ScrollView>
         {restaurants.map((item, i) => {
           return (
-            <View
-              key={i + item.name + item.restaurantsId}
-              style={styles.imageContainer}>
-              <TouchableOpacity onPress={() => goToRestaurant(item.name)}>
-                <Image style={styles.image} source={{uri: item.imageUrl}} />
-                <View style={styles.line} />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={() => goToRestaurant(item.name)}>
+              <View style={styles.box}>
+                <View style={[styles.card, styles.elevation]}>
+                  <View style={styles.backgroundContainer}>
+                    <ImageBackground
+                      source={{uri: item.backgroundImageUrl}}
+                      style={styles.image}>
+                      <View style={styles.logoContainer}>
+                        <Image
+                          style={styles.logo}
+                          source={{uri: item.imageUrl}}
+                        />
+                      </View>
+                    </ImageBackground>
+                  </View>
+                  <View style={styles.descContainer}>
+                    <View style={styles.row}>
+                      <Icon name="star" style={styles.icon} />
+                      <Text style={styles.text}>{item.score}/5</Text>
+                    </View>
+                    <View>
+                      <Text style={styles.textTitle}>{item.name}</Text>
+                      <View style={styles.row}>
+                        <Text style={styles.textDesc}>{item.street}</Text>
+                        <Text style={styles.textDesc}>{item.houseNumber}</Text>
+                        <Text style={styles.textDesc}>{item.location}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
           );
         })}
       </ScrollView>
@@ -75,44 +91,91 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    alignContent: 'center',
     backgroundColor: 'white',
   },
-  text: {
-    color: COLORS.second,
-    fontFamily: 'Ubuntu-Light',
-    fontSize: 26,
-    textAlign: 'center',
+  box: {
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignContent: 'center',
   },
-  imageContainer: {
+  backgroundContainer: {
     justifyContent: 'center',
     display: 'flex',
     flexDirection: 'column',
     flexWrap: 'wrap',
     alignItems: 'center',
     alignContent: 'center',
-    width: imageWidth / 1.5,
-    height: imageHeight / 1.5,
-    // borderWidth: 1,
+    width: '100%',
     borderRadius: 5,
-    // borderColor: COLORS.mainOrange,
-    backgroundColor: COLORS.third,
-    margin: 30,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 0,
+    // paddingVertical: 45,
+    // paddingHorizontal: 25,
+    width: 350,
+    marginVertical: 20,
+  },
+  elevation: {
+    elevation: 5,
+    shadowColor: '#52006A',
   },
   image: {
-    width: imageWidth / 1.5,
-    height: imageHeight / 1.5,
-    resizeMode: 'contain',
-    borderRadius: 5,
-    borderColor: COLORS.second,
-    borderWidth: 1,
-    margin: 20,
+    width: '100%',
+    height: imageHeight / 2,
   },
-  line: {
+  logo: {
+    width: imageWidth / 4,
+    height: imageHeight / 3,
+    resizeMode: 'contain',
+    borderRadius: 60,
+    borderWidth: 1,
+    backgroundColor: COLORS.main,
+  },
+  logoContainer: {
     flex: 1,
-    borderBottomWidth: 1,
-    borderColor: COLORS.second,
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
+  descContainer: {
+    margin: 15,
+  },
+  row: {
+    justifyContent: 'flex-start',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+  },
+  icon: {
+    color: COLORS.second,
+    fontSize: 16,
+  },
+  text: {
+    color: COLORS.second,
+    fontFamily: 'Ubuntu-Light',
+    fontSize: 16,
+    textAlign: 'center',
+    marginLeft: 10,
+  },
+  textTitle: {
+    color: COLORS.second,
+    fontFamily: 'Ubuntu-Light',
+    fontSize: 20,
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  textDesc: {
+    color: COLORS.fourth,
+    fontFamily: 'Ubuntu-Light',
+    fontSize: 14,
+    textAlign: 'center',
+    marginRight: 10,
   },
 });
