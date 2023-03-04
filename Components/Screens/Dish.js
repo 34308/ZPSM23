@@ -1,4 +1,5 @@
 import {
+  Button,
   Dimensions,
   Image,
   ScrollView,
@@ -17,6 +18,7 @@ import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 import {getUserName} from '../Utilities';
+import {showMessage} from 'react-native-flash-message';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -114,6 +116,12 @@ export default function Dish() {
     const data = await resp.text();
     console.log(data);
     onRefresh();
+    showMessage({
+      message: 'Dodano do koszyka.',
+      type: 'info',
+      backgroundColor: COLORS.second,
+      color: COLORS.main,
+    });
     return undefined;
   }
 
