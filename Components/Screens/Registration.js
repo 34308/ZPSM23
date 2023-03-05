@@ -11,6 +11,8 @@ import {
 import {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../Colors';
+import NetInfo from '@react-native-community/netinfo';
+import {NOINTERNET, SERVER_ERROR} from '../actions';
 
 export default function Registration({navigation}) {
   const [login, setLogin] = useState('');
@@ -108,7 +110,9 @@ export default function Registration({navigation}) {
           console.log(r.status);
         })
         .catch(error => {
-          alert('server down. Sorry for Inconvenience.  error code:' + error);
+          NetInfo.fetch().then(state => {
+            state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+          });
         });
     } catch (error) {
       console.error(error);

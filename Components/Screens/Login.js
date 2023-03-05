@@ -11,8 +11,9 @@ import {
 import {useState} from 'react';
 import {COLORS} from '../Colors';
 import {useDispatch} from 'react-redux';
-import {LOGIN} from '../actions';
+import {LOGIN, NOINTERNET, SERVER_ERROR} from '../actions';
 import store from '../store';
+import NetInfo from '@react-native-community/netinfo';
 
 export default function Login({navigation}) {
   const [login, setLogin] = useState('');
@@ -66,13 +67,14 @@ export default function Login({navigation}) {
           }
         })
         .catch(error => {
-          alert('server down. Sorry for Inconvenience.  error code:' + error);
+          NetInfo.fetch().then(state => {
+            state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+          });
         });
     } catch (error) {
       console.error(error);
     }
   }
-
 
   return (
     <ScrollView style={styles.container}>

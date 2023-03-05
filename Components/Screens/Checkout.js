@@ -17,6 +17,8 @@ import {COLORS} from '../Colors';
 import store from '../store';
 import {getUserName} from '../Utilities';
 import RNFetchBlob from 'rn-fetch-blob';
+import NetInfo from '@react-native-community/netinfo';
+import {NOINTERNET, SERVER_ERROR} from '../actions';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -45,7 +47,9 @@ export default function Checkout({navigation}) {
         }),
       },
     ).catch(error => {
-      alert('server down. Sorry for Inconvenience.  error code:' + error);
+      NetInfo.fetch().then(state => {
+        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+      });
     });
     if (resp.ok) {
       empty(false);
@@ -84,7 +88,9 @@ export default function Checkout({navigation}) {
           }),
         },
       ).catch(error => {
-        alert('server down. Sorry for Inconvenience.  error code:' + error);
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
       });
       if (resp.ok) {
         empty(false);
@@ -139,7 +145,7 @@ export default function Checkout({navigation}) {
               'Receipt from ' +
               date.getDate() +
               '-' +
-              date.getMonth() +
+              (date.getMonth() + 1) +
               '-' +
               date.getFullYear(),
             description: 'Receipt for order in Szama(n)',
@@ -179,7 +185,11 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      NetInfo.fetch().then(state => {
+        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+      });
+    });
     const data = await resp.text();
     console.log(data);
     onRefresh();
@@ -200,7 +210,9 @@ export default function Checkout({navigation}) {
         }),
       },
     ).catch(error => {
-      alert('server down. Sorry for Inconvenience.  error code:' + error);
+      NetInfo.fetch().then(state => {
+        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+      });
     });
     const data = await resp.text();
     console.log(data);
@@ -221,7 +233,9 @@ export default function Checkout({navigation}) {
         }),
       },
     ).catch(error => {
-      alert('server down. Sorry for Inconvenience.  error code:' + error);
+      NetInfo.fetch().then(state => {
+        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+      });
     });
     const data = await resp.text();
     console.log(data);

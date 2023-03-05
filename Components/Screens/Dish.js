@@ -19,6 +19,8 @@ LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 import {getUserName} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
+import NetInfo from '@react-native-community/netinfo';
+import {NOINTERNET, SERVER_ERROR} from '../actions';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -48,7 +50,11 @@ export default function Dish() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resp = await fetch(url);
+        const resp = await fetch(url).catch(error => {
+          NetInfo.fetch().then(state => {
+            state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+          });
+        });
         const data = await resp.json();
         setDish(data);
       } catch (error) {
@@ -68,7 +74,10 @@ export default function Dish() {
           }),
         },
       ).catch(error => {
-        alert('server down. Sorry for Inconvenience.  error code:' + error);
+        NetInfo.fetch().then(state => {
+          state.isConnected?alert(SERVER_ERROR + error):alert(NOINTERNET);
+        });
+
       });
       const text = await resp2.text();
       console.log(text);
@@ -115,7 +124,10 @@ export default function Dish() {
         }),
       },
     ).catch(error => {
-      alert('server down. Sorry for Inconvenience.  error code:' + error);
+      NetInfo.fetch().then(state => {
+        state.isConnected?alert(SERVER_ERROR + error):alert(NOINTERNET);
+      });
+
     });
     const data = await resp.text();
     console.log(data);

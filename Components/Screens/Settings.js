@@ -4,6 +4,8 @@ import {COLORS} from '../Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {getUserName, LogOut} from '../Utilities';
 import store from '../store';
+import NetInfo from '@react-native-community/netinfo';
+import {NOINTERNET, SERVER_ERROR} from '../actions';
 
 export default function Settings({navigation}) {
   function deleteAccount() {
@@ -31,7 +33,9 @@ export default function Settings({navigation}) {
         'Content-Type': 'application/x-www-form-urlencoded',
       }),
     }).catch(error => {
-      alert('server down. Sorry for Inconvenience.  error code:' + error);
+      NetInfo.fetch().then(state => {
+        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+      });
     });
     const data = await resp.text();
     console.log(data);
@@ -47,7 +51,9 @@ export default function Settings({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       }).catch(error => {
-        alert('server down. Sorry for Inconvenience.  error code:' + error);
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
       });
       LogOut(navigation, store.dispatch);
       console.log('Delete successful.');

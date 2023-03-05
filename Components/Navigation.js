@@ -29,7 +29,8 @@ import {isTokenExp, LogOut} from './Utilities';
 import {COLORS} from './Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+
 function Navigation() {
   const Drawer = createDrawerNavigator();
   const dispatch = useDispatch();
@@ -37,6 +38,12 @@ function Navigation() {
   const [checkOldToken, checked] = useState(false);
 
   useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log('Is connected?', state.isConnected);
+      if (!state.isConnected) {
+        alert('Brak internetu');
+      }
+    });
     if (!checkOldToken) {
       getData(JWT).then(token => {
         if (token !== null) {

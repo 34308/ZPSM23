@@ -12,6 +12,8 @@ import React, {useEffect, useState} from 'react';
 import {COLORS} from '../Colors';
 import {re} from '@babel/core/lib/vendor/import-meta-resolve';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import NetInfo from '@react-native-community/netinfo';
+import {NOINTERNET, SERVER_ERROR} from '../actions';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -36,7 +38,9 @@ export default function Restaurants({navigation}) {
     const fetchData = async () => {
       try {
         const resp = await fetch(url).catch(error => {
-          alert('server down. Sorry for Inconvenience.  error code:' + error);
+          NetInfo.fetch().then(state => {
+            state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+          });
         });
         const data = await resp.json();
         setNumberOfRestaurants(data.length);
@@ -48,7 +52,7 @@ export default function Restaurants({navigation}) {
 
     fetchData();
     return unsubscribe;
-  }, []);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>

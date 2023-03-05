@@ -16,6 +16,8 @@ import store from '../store';
 import CookieManager from '@react-native-cookies/cookies';
 import {getUserName} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
+import NetInfo from '@react-native-community/netinfo';
+import {NOINTERNET, SERVER_ERROR} from '../actions';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -46,7 +48,9 @@ export default function Dishes({navigation}) {
         }),
       },
     ).catch(error => {
-      alert('server down. Sorry for Inconvenience.  error code:' + error);
+      NetInfo.fetch().then(state => {
+        state.isConnected?alert(SERVER_ERROR + error):alert(NOINTERNET);
+      });
     });
     const data = await resp.text();
     console.log(data);
@@ -62,7 +66,12 @@ export default function Dishes({navigation}) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resp = await fetch(url);
+        const resp = await fetch(url).catch(error => {
+          NetInfo.fetch().then(state => {
+            state.isConnected?alert(SERVER_ERROR + error):alert(NOINTERNET);
+          });
+
+        });;
         const data = await resp.json();
         setDishes(data.content);
       } catch (error) {
