@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {COLORS} from '../Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {getUserName, LogOut} from '../Utilities';
-import store from './store';
+import store from '../store';
 
 export default function Settings({navigation}) {
   function deleteAccount() {
@@ -23,7 +23,19 @@ export default function Settings({navigation}) {
     let user = getUserName(store.getState().token);
     alert(user);
   }
-
+  async function getUser() {
+    const resp = await fetch('http://10.0.2.2:8082/broniq1/user', {
+      method: 'GET',
+      headers: new Headers({
+        Authorization: 'Bearer ' + store.getState().token,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }),
+    }).catch(error => {
+      alert('server down. Sorry for Inconvenience.  error code:' + error);
+    });
+    const data = await resp.text();
+    console.log(data);
+  }
   async function deletePost() {
     let user = getUserName(store.getState().token);
     let url = 'http://10.0.2.2:8082/' + user + '/user/delete';
@@ -34,6 +46,8 @@ export default function Settings({navigation}) {
           Authorization: 'Bearer ' + store.getState().token,
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
+      }).catch(error => {
+        alert('server down. Sorry for Inconvenience.  error code:' + error);
       });
       LogOut(navigation, store.dispatch);
       console.log('Delete successful.');

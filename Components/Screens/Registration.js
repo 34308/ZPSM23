@@ -100,12 +100,16 @@ export default function Registration({navigation}) {
           cvv: cvv.toString(),
           email: email.toString(),
         }),
-      }).then(r => {
-        if (!r.ok) {
-          alert('niepoprawna Rejestaracja blad serwera');
-        }
-        console.log(r.status);
-      });
+      })
+        .then(r => {
+          if (!r.ok) {
+            alert('niepoprawna Rejestaracja blad serwera');
+          }
+          console.log(r.status);
+        })
+        .catch(error => {
+          alert('server down. Sorry for Inconvenience.  error code:' + error);
+        });
     } catch (error) {
       console.error(error);
     }

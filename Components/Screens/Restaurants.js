@@ -28,10 +28,16 @@ export default function Restaurants({navigation}) {
   }
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData();
+    });
     const url = 'http://10.0.2.2:8082/restaurants';
+
     const fetchData = async () => {
       try {
-        const resp = await fetch(url);
+        const resp = await fetch(url).catch(error => {
+          alert('server down. Sorry for Inconvenience.  error code:' + error);
+        });
         const data = await resp.json();
         setNumberOfRestaurants(data.length);
         setRestaurants(data);
@@ -41,17 +47,20 @@ export default function Restaurants({navigation}) {
     };
 
     fetchData();
+    return unsubscribe;
   }, []);
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View style={styles.restaurantsNumberBox}>
-          <Text style={styles.restaurantsNumberText}>Zamów z ponad {numberOfRestaurants} restauracji.</Text>
+          <Text style={styles.restaurantsNumberText}>
+            Zamów z ponad {numberOfRestaurants} restauracji.
+          </Text>
         </View>
         {restaurants.map((item, i) => {
           return (
-            <TouchableOpacity onPress={() => goToRestaurant(item.name)}>
+            <TouchableOpacity key={i} onPress={() => goToRestaurant(item.name)}>
               <View style={styles.box}>
                 <View style={[styles.card, styles.elevation]}>
                   <View style={styles.backgroundContainer}>

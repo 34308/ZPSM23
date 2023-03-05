@@ -23,7 +23,7 @@ import {Image, View} from 'react-native';
 import {loginReducer} from './Reducer';
 import {JWT, LOGIN, LOGOUT} from './actions';
 import {useDispatch} from 'react-redux';
-import store from './Screens/store';
+import store from './store';
 import {getData} from './StorageHelper';
 import {isTokenExp, LogOut} from './Utilities';
 import {COLORS} from './Colors';

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import store from './store';
+import store from '../store';
 import {useRoute} from '@react-navigation/native';
 import {COLORS} from '../Colors';
 import {LogBox} from 'react-native';
@@ -67,7 +67,9 @@ export default function Dish() {
             'Content-Type': 'application/x-www-form-urlencoded',
           }),
         },
-      );
+      ).catch(error => {
+        alert('server down. Sorry for Inconvenience.  error code:' + error);
+      });
       const text = await resp2.text();
       console.log(text);
       let data2 = JSON.parse(text);
@@ -112,7 +114,9 @@ export default function Dish() {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      alert('server down. Sorry for Inconvenience.  error code:' + error);
+    });
     const data = await resp.text();
     console.log(data);
     onRefresh();

@@ -14,7 +14,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import AntDesignIcon from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../Colors';
-import store from './store';
+import store from '../store';
 import {getUserName} from '../Utilities';
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -26,15 +26,10 @@ export default function Checkout({navigation}) {
   const [currentUser, setCurrentUser] = useState('');
   const [cartItems, setCartItems] = useState([]);
   const [productPrice, setProductPrice] = useState('');
-  const [numberOfRestaurants, setNumberOfRestaurants] = useState(0);
   const [refreshing, setRefreshing] = React.useState(false);
   const moneyForDelivery = 15;
-  const [note, setNote] = React.useState('');
+  const [note, setNote] = React.useState('brak');
   const [isEmpty, empty] = React.useState(false);
-
-  function show() {
-    alert(note);
-  }
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -49,7 +44,9 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      alert('server down. Sorry for Inconvenience.  error code:' + error);
+    });
     if (resp.ok) {
       empty(false);
       const text = await resp.text();
@@ -86,7 +83,9 @@ export default function Checkout({navigation}) {
             'Content-Type': 'application/x-www-form-urlencoded',
           }),
         },
-      );
+      ).catch(error => {
+        alert('server down. Sorry for Inconvenience.  error code:' + error);
+      });
       if (resp.ok) {
         empty(false);
         const text = await resp.text();
@@ -114,9 +113,9 @@ export default function Checkout({navigation}) {
       'http://10.0.2.2:8082/' +
       getUserName(store.getState().token) +
       '/usercart/checkout/' +
-      note.replaceAll(' ', '_') +
+      note.replaceAll(' ', '_').replaceAll('\n', '_') +
       '/true';
-
+    console.log(url);
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       {
@@ -200,7 +199,9 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      alert('server down. Sorry for Inconvenience.  error code:' + error);
+    });
     const data = await resp.text();
     console.log(data);
     onRefresh();
@@ -219,14 +220,15 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      alert('server down. Sorry for Inconvenience.  error code:' + error);
+    });
     const data = await resp.text();
     console.log(data);
     onRefresh();
   }
   //Zabezpieczenie przed ujemną liczbą dań
   function decreaseNumberOfItems(dishId, countOfDish) {
-    console.warn('!!!!!!!!!!!!!!!!countofDish:'+countOfDish);
     if (countOfDish > 0) {
       deleteItem(dishId, parseInt(countOfDish) - 1);
     } else if (countOfDish === 0) {

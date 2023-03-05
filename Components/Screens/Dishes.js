@@ -12,7 +12,7 @@ import React, {useEffect, useState} from 'react';
 import {COLORS} from '../Colors';
 import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import store from './store';
+import store from '../store';
 import CookieManager from '@react-native-cookies/cookies';
 import {getUserName} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
@@ -45,7 +45,9 @@ export default function Dishes({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      alert('server down. Sorry for Inconvenience.  error code:' + error);
+    });
     const data = await resp.text();
     console.log(data);
     showMessage({
