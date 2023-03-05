@@ -11,9 +11,12 @@ import {
 import {useState} from 'react';
 import {COLORS} from '../Colors';
 import {useDispatch} from 'react-redux';
-import {LOGIN, NOINTERNET, SERVER_ERROR} from '../actions';
+import {LOGIN, LOGOUT, NOINTERNET, SERVER_ERROR} from '../actions';
 import store from '../store';
 import NetInfo from '@react-native-community/netinfo';
+import jwtDecode from 'jwt-decode';
+import {showMessage} from 'react-native-flash-message';
+
 
 export default function Login({navigation}) {
   const [login, setLogin] = useState('');
@@ -60,6 +63,16 @@ export default function Login({navigation}) {
           if (response.ok) {
             const data = await response.text();
             const token = JSON.parse(data).value;
+            const interval = setTimeout(() => {
+              console.error('logout');
+              showMessage({
+                message: 'Token Wygasł.',
+                type: 'info',
+                backgroundColor: COLORS.second,
+                color: COLORS.main,
+              });
+              dispatch({type: LOGOUT, payload: '' + token});
+            }, (jwtDecode(token).exp - jwtDecode(token).iat) * 1000);
             dispatch({type: LOGIN, payload: '' + token});
             goToRestaurants();
           } else {

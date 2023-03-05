@@ -38,12 +38,6 @@ function Navigation() {
   const [checkOldToken, checked] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      console.log('Is connected?', state.isConnected);
-      if (!state.isConnected) {
-        alert('Brak internetu');
-      }
-    });
     if (!checkOldToken) {
       getData(JWT).then(token => {
         if (token !== null) {
