@@ -30,6 +30,7 @@ import {COLORS} from './Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NetInfo from '@react-native-community/netinfo';
+import EditProfile from './Screens/EditProfile';
 
 function Navigation() {
   const Drawer = createDrawerNavigator();
@@ -69,6 +70,7 @@ function Navigation() {
           backgroundColor: 'white',
           headerTintColor: COLORS.second,
         }}>
+        <Stack.Screen name="EditScreen" component={EditProfile} />
         <Stack.Screen name="Drawer" component={DrawerPart} />
         <Stack.Screen name="Dish" component={Dish} />
         <Stack.Screen name="Dishes" component={Dishes} />

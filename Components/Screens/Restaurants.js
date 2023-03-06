@@ -13,7 +13,8 @@ import {COLORS} from '../Colors';
 import {re} from '@babel/core/lib/vendor/import-meta-resolve';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import NetInfo from '@react-native-community/netinfo';
-import {NOINTERNET, SERVER_ERROR} from '../actions';
+import {LOGOUT, NOINTERNET, SERVER_ERROR} from '../actions';
+
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -22,7 +23,7 @@ const imageWidth = dimensions.width;
 export default function Restaurants({navigation}) {
   const [restaurants, setRestaurants] = useState([]);
   const [numberOfRestaurants, setNumberOfRestaurants] = useState(0);
-  function goToRestaurant(restaurantName) {
+  async function goToRestaurant(restaurantName) {
     navigation.navigate('Dishes', {
       restaurantUrl: restaurantName + '/dishes?p=0',
       restaurantName: restaurantName,

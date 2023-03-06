@@ -25,21 +25,7 @@ export default function Settings({navigation}) {
     let user = getUserName(store.getState().token);
     alert(user);
   }
-  async function getUser() {
-    const resp = await fetch('http://10.0.2.2:8082/broniq1/user', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + store.getState().token,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      }),
-    }).catch(error => {
-      NetInfo.fetch().then(state => {
-        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
-      });
-    });
-    const data = await resp.text();
-    console.log(data);
-  }
+
   async function deletePost() {
     let user = getUserName(store.getState().token);
     let url = 'http://10.0.2.2:8082/' + user + '/user/delete';
@@ -62,10 +48,14 @@ export default function Settings({navigation}) {
     }
   }
 
+  function goToEditScreen() {
+    navigation.navigate("EditScreen");
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <TouchableOpacity style={styles.borderBox}>
+        <TouchableOpacity onPress={()=>goToEditScreen()} style={styles.borderBox}>
           <View style={styles.row}>
             <Icon name="user" style={styles.iconLeft} />
             <Text style={styles.text}>Edytuj profil</Text>
