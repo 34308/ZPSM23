@@ -15,10 +15,16 @@ import React, {useEffect, useState} from 'react';
 import AntDesignIcon from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../Colors';
 import store from '../store';
-import {getUserName} from '../Utilities';
+import {
+  checkIfLogged,
+  checkIfLoggedAndLogout,
+  getUserName,
+  LogOut,
+} from '../Utilities';
 import RNFetchBlob from 'rn-fetch-blob';
 import NetInfo from '@react-native-community/netinfo';
 import {NOINTERNET, SERVER_ERROR} from '../actions';
+import {showMessage} from 'react-native-flash-message';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -73,6 +79,7 @@ export default function Checkout({navigation}) {
   }, []);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      checkIfLoggedAndLogout(navigation, store);
       getCart();
     });
     async function getCart() {
@@ -112,65 +119,83 @@ export default function Checkout({navigation}) {
   }, [navigation]);
 
   async function checkOut() {
-    setRefreshing(true);
-    const date = new Date();
-    let dirs = RNFetchBlob.fs.dirs;
-    const url =
-      'http://10.0.2.2:8082/' +
-      getUserName(store.getState().token) +
-      '/usercart/checkout/' +
-      note.replaceAll(' ', '_').replaceAll('\n', '_') +
-      '/true';
-    console.log(url);
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: 'Receipt needs to be saved on your device',
-        message:
-          'Receipt needs to be saved on your device if you dont want to save it on your device it will also be send on your email',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted) {
-      if (Platform.OS === 'android') {
-        RNFetchBlob.config({
-          fileCache: false,
-          addAndroidDownloads: {
-            useDownloadManager: true,
-            notification: true,
-            mime: 'application/pdf',
-            title:
-              'Receipt from ' +
-              date.getDate() +
-              '-' +
-              (date.getMonth() + 1) +
-              '-' +
-              date.getFullYear(),
-            description: 'Receipt for order in Szama(n)',
-            path: dirs.DownloadDir + 'Receipt.pdf',
-          },
-        })
-          .fetch('get', url, {
-            Authorization: 'Bearer ' + store.getState().token,
-            'Cache-Control': 'no-store',
+    if (note === '') {
+      setNote('brak');
+    }
+    if (await checkIfLogged()) {
+      setRefreshing(true);
+      const date = new Date();
+      let dirs = RNFetchBlob.fs.dirs;
+      const url =
+        'http://10.0.2.2:8082/' +
+        getUserName(store.getState().token) +
+        '/usercart/checkout/' +
+        note.replaceAll(' ', '_').replaceAll('\n', '_') +
+        '/true';
+      console.log(url);
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Receipt needs to be saved on your device',
+          message:
+            'Receipt needs to be saved on your device if you dont want to save it on your device it will also be send on your email',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted) {
+        if (Platform.OS === 'android') {
+          RNFetchBlob.config({
+            fileCache: false,
+            addAndroidDownloads: {
+              useDownloadManager: true,
+              notification: true,
+              mime: 'application/pdf',
+              title:
+                'Receipt from ' +
+                date.getDate() +
+                '-' +
+                (date.getMonth() + 1) +
+                '-' +
+                date.getFullYear(),
+              description: 'Receipt for order in Szama(n)',
+              path: dirs.DownloadDir + 'Receipt.pdf',
+            },
           })
-          .then(res => {
-            setRefreshing(false);
-            onRefresh();
-            setProductPrice(0);
-            empty(true);
-          })
-          .catch((errorMessage, statusCode) => {
-            console.error(errorMessage, statusCode);
-          });
+            .fetch('get', url, {
+              Authorization: 'Bearer ' + store.getState().token,
+              'Cache-Control': 'no-store',
+            })
+            .then(res => {
+              setRefreshing(false);
+              onRefresh();
+              setProductPrice(0);
+              empty(true);
+            })
+            .catch((errorMessage, statusCode) => {
+              console.error(errorMessage, statusCode);
+            });
+        }
+      } else {
+        showMessage({
+          message: 'Twoja Recepta została wysłana na email.',
+          type: 'info',
+          backgroundColor: COLORS.second,
+          color: COLORS.main,
+        });
       }
     } else {
-      alert('Receipt was send on your Email');
+      LogOut(navigation, store.dispatch);
+      showMessage({
+        message: 'Twoja sesja wygasla, zaloguj sie ponownie.',
+        type: 'info',
+        backgroundColor: COLORS.second,
+        color: COLORS.main,
+      });
     }
   }
-  async function addItem(id, numberOfProduct) {
+  async function updateItem(id, numberOfProduct) {
     const resp = await fetch(
       'http://10.0.2.2:8082/' +
         getUserName(store.getState().token) +
@@ -185,35 +210,23 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    ).catch(error => {
-      NetInfo.fetch().then(state => {
-        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+    )
+      .then(response => {
+        if (!response.ok) {
+          LogOut(navigation, store.dispatch);
+          showMessage({
+            message: 'Twoja sesja wygasla, zaloguj sie ponownie.',
+            type: 'info',
+            backgroundColor: COLORS.second,
+            color: COLORS.main,
+          });
+        }
+      })
+      .catch(error => {
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
       });
-    });
-    const data = await resp.text();
-    console.log(data);
-    onRefresh();
-  }
-  async function deleteItem(id, numberOfProduct) {
-    const resp = await fetch(
-      'http://10.0.2.2:8082/' +
-        getUserName(store.getState().token) +
-        '/usercart/' +
-        id +
-        '/save/' +
-        numberOfProduct,
-      {
-        method: 'POST',
-        headers: new Headers({
-          Authorization: 'Bearer ' + store.getState().token,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        }),
-      },
-    ).catch(error => {
-      NetInfo.fetch().then(state => {
-        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
-      });
-    });
     const data = await resp.text();
     console.log(data);
     onRefresh();
@@ -243,8 +256,9 @@ export default function Checkout({navigation}) {
   }
   //Zabezpieczenie przed ujemną liczbą dań
   function decreaseNumberOfItems(dishId, countOfDish) {
+    countOfDish = countOfDish - 1;
     if (countOfDish > 0) {
-      deleteItem(dishId, parseInt(countOfDish) - 1);
+      updateItem(dishId, parseInt(countOfDish));
     } else if (countOfDish === 0) {
       deleteItemFromCart(dishId);
     }
@@ -302,7 +316,7 @@ export default function Checkout({navigation}) {
                     <View style={styles.column}>
                       <TouchableOpacity
                         onPress={() =>
-                          addItem(
+                          updateItem(
                             item.dish.dishId,
                             parseInt(item.countOfDish) + 1,
                           )

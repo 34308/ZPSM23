@@ -66,7 +66,7 @@ export default function Login({navigation}) {
             const interval = setTimeout(() => {
               console.error('logout');
               showMessage({
-                message: 'Token Wygasł.',
+                message: 'Twoja sesja wygasla, zaloguj sie ponownie.',
                 type: 'info',
                 backgroundColor: COLORS.second,
                 color: COLORS.main,

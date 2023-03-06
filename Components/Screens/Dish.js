@@ -17,10 +17,11 @@ import {COLORS} from '../Colors';
 import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
-import {getUserName} from '../Utilities';
+import { getUserName, LogOut} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
 import {NOINTERNET, SERVER_ERROR} from '../actions';
+import navigation from '../Navigation';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -45,7 +46,6 @@ export default function Dish() {
   function addItem() {
     setCounter(counter + 1);
   }
-  // {login}/usercart/{dishId}/save/{count}
 
   useEffect(() => {
     const fetchData = async () => {
@@ -75,12 +75,10 @@ export default function Dish() {
         },
       ).catch(error => {
         NetInfo.fetch().then(state => {
-          state.isConnected?alert(SERVER_ERROR + error):alert(NOINTERNET);
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
         });
-
       });
       const text = await resp2.text();
-      console.log(text);
       let data2 = JSON.parse(text);
 
       setCartItems(data2.content);
@@ -108,37 +106,47 @@ export default function Dish() {
   }, []);
 
   async function addItemToCasket(dishID, numberOfProduct) {
-    console.log(dishID);
-    const resp = await fetch(
-      'http://10.0.2.2:8082/' +
-        getUserName(store.getState().token) +
-        '/usercart/' +
-        dishID +
-        '/save/' +
-        numberOfProduct,
-      {
-        method: 'POST',
-        headers: new Headers({
-          Authorization: 'Bearer ' + store.getState().token,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        }),
-      },
-    ).catch(error => {
-      NetInfo.fetch().then(state => {
-        state.isConnected?alert(SERVER_ERROR + error):alert(NOINTERNET);
+    if (numberOfProduct !== 0) {
+      const resp = await fetch(
+        'http://10.0.2.2:8082/' +
+          getUserName(store.getState().token) +
+          '/usercart/' +
+          dishID +
+          '/save/' +
+          numberOfProduct,
+        {
+          method: 'POST',
+          headers: new Headers({
+            Authorization: 'Bearer ' + store.getState().token,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }),
+        },
+      )
+        .then(resp => {
+          if (!resp.ok) {
+            LogOut(navigation, store.dispatch);
+            showMessage({
+              message: 'Twoja sesja wygasla, zaloguj sie ponownie.',
+              type: 'info',
+              backgroundColor: COLORS.second,
+              color: COLORS.main,
+            });
+          }
+        })
+        .catch(error => {
+          NetInfo.fetch().then(state => {
+            state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+          });
+        });
+      const data = await resp.text();
+      onRefresh();
+      showMessage({
+        message: 'Dodano do koszyka.',
+        type: 'info',
+        backgroundColor: COLORS.second,
+        color: COLORS.main,
       });
-
-    });
-    const data = await resp.text();
-    console.log(data);
-    onRefresh();
-    showMessage({
-      message: 'Dodano do koszyka.',
-      type: 'info',
-      backgroundColor: COLORS.second,
-      color: COLORS.main,
-    });
-    return undefined;
+    }
   }
 
   return (
