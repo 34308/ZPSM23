@@ -25,8 +25,8 @@ const imageWidth = dimensions.width;
 
 export default function Dishes({navigation}) {
   const [dishes, setDishes] = useState([]);
-  // const [isPressed, setPressed] = useState('');
   const route = useRoute();
+  const [phrase, setPhrase] = useState('');
   const url = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantUrl;
   const restaurantName =
     'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
@@ -72,13 +72,13 @@ export default function Dishes({navigation}) {
           });
         });
         const data = await resp.json();
-        setDishes(data.content);
+        setDishes(data);
       } catch (error) {
         console.log('error', error);
       }
     };
     fetchData();
-  }, [route.params.restaurantName]);
+  }, [route.params.restaurantName, url]);
 
   function goToDish(dishUrl) {
     navigation.navigate('Dish', {
@@ -95,45 +95,54 @@ export default function Dishes({navigation}) {
         <View style={styles.searchBar}>
           <Icon name="search" style={styles.icon} />
           <TextInput
+            value={phrase}
+            onChangeText={setPhrase}
             placeholder="Restauracja u Jana"
             style={styles.textSearchBar}
           />
         </View>
-        {dishes.map((item, i) => {
-          return (
-            <View key={i + item.dishId}>
-              <View style={styles.row}>
-                <TouchableOpacity
-                  onPress={() =>
-                    goToDish(restaurantName + '/dishes/' + item.name)
-                  }>
-                  <View style={styles.imageContainer}>
-                    <Image style={styles.image} source={{uri: item.imageUrl}} />
+        {dishes
+          .filter(function (dish) {
+            return dish.name.toLowerCase().includes(phrase);
+          })
+          .map((item, i) => {
+            return (
+              <View key={i + item.dishId}>
+                <View style={styles.row}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      goToDish(restaurantName + '/dishes/' + item.name)
+                    }>
+                    <View style={styles.imageContainer}>
+                      <Image
+                        style={styles.image}
+                        source={{uri: item.imageUrl}}
+                      />
+                    </View>
+                  </TouchableOpacity>
+
+                  <View style={styles.column}>
+                    <Text style={styles.textTitle}>{item.name}</Text>
+                    <Text style={styles.textDesc}>{item.description}</Text>
+                    <Text style={styles.line} />
                   </View>
-                </TouchableOpacity>
 
-                <View style={styles.column}>
-                  <Text style={styles.textTitle}>{item.name}</Text>
-                  <Text style={styles.textDesc}>{item.description}</Text>
-                  <Text style={styles.line} />
-                </View>
-
-                <View style={styles.columnPrice}>
-                  <Text style={styles.textTitle}>CENA</Text>
-                  <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
-                  {store.getState().isLoggedIn ? (
-                    <TouchableOpacity
-                      onPress={() => addItemToCasket(item.dishId)}>
-                      <View style={styles.plusContainer}>
-                        <Icon name="plus-circle" style={styles.iconPlus} />
-                      </View>
-                    </TouchableOpacity>
-                  ) : null}
+                  <View style={styles.columnPrice}>
+                    <Text style={styles.textTitle}>CENA</Text>
+                    <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
+                    {store.getState().isLoggedIn ? (
+                      <TouchableOpacity
+                        onPress={() => addItemToCasket(item.dishId)}>
+                        <View style={styles.plusContainer}>
+                          <Icon name="plus-circle" style={styles.iconPlus} />
+                        </View>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
                 </View>
               </View>
-            </View>
-          );
-        })}
+            );
+          })}
       </ScrollView>
     </View>
     // </View>

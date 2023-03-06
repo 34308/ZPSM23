@@ -25,7 +25,7 @@ export default function Restaurants({navigation}) {
   const [numberOfRestaurants, setNumberOfRestaurants] = useState(0);
   async function goToRestaurant(restaurantName) {
     navigation.navigate('Dishes', {
-      restaurantUrl: restaurantName + '/dishes?p=0',
+      restaurantUrl: restaurantName + '/dishes',
       restaurantName: restaurantName,
     });
   }

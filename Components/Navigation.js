@@ -109,7 +109,7 @@ function Navigation() {
           <View>
             <DrawerItem
               onPress={() => LogOut(props.navigation, dispatch)}
-              label="Logout"
+              label="Wyloguj się"
               labelStyle={{fontSize: 15, color: 'black', fontWeight: 'normal'}}
               icon={() => <Ionicons name="exit" size={22} color="#ccc" />}
             />

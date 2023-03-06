@@ -23,6 +23,8 @@ import {
 } from '../Utilities';
 import RNFetchBlob from 'rn-fetch-blob';
 import NetInfo from '@react-native-community/netinfo';
+import CheckBox from '@react-native-community/checkbox';
+
 import {NOINTERNET, SERVER_ERROR} from '../actions';
 import {showMessage} from 'react-native-flash-message';
 
@@ -34,10 +36,11 @@ export default function Checkout({navigation}) {
   const [currentUser, setCurrentUser] = useState('');
   const [cartItems, setCartItems] = useState([]);
   const [productPrice, setProductPrice] = useState('');
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [delivery, setDelivery] = useState(false);
   const moneyForDelivery = 15;
   const [note, setNote] = React.useState('brak');
-  const [isEmpty, empty] = React.useState(false);
+  const [isEmpty, empty] = React.useState(true);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -131,7 +134,8 @@ export default function Checkout({navigation}) {
         getUserName(store.getState().token) +
         '/usercart/checkout/' +
         note.replaceAll(' ', '_').replaceAll('\n', '_') +
-        '/true';
+        '/' +
+        delivery;
       console.log(url);
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -325,18 +329,15 @@ export default function Checkout({navigation}) {
                       </TouchableOpacity>
                     </View>
                   </View>
-                  {/*<View style={styles.column}>*/}
-                  {/*  <Text style={styles.priceText}>{item.dish.price}zl</Text>*/}
-                  {/*</View>*/}
                 </View>
               </View>
             </View>
           );
         })}
         <View style={[styles.box, styles.marginBox]}>
-          <Text style={styles.infoText}>Dodatkowe informacje</Text>
           <View style={styles.inputMargin}>
             <View style={[styles.card, styles.elevation]}>
+              <Text style={styles.infoText}>Dodatkowe informacje</Text>
               <TextInput
                 style={styles.input}
                 value={note}
@@ -344,6 +345,15 @@ export default function Checkout({navigation}) {
                 onChangeText={setNote}
                 placeholder="Informacje do zamówienia."
                 keyboardType="default"
+              />
+            </View>
+            <View style={[styles.card, styles.elevation]}>
+              <Text style={styles.infoText}>Dostawa?</Text>
+              <CheckBox
+                style={{alignSelf: 'center'}}
+                disabled={false}
+                value={delivery}
+                onValueChange={newValue => setDelivery(newValue)}
               />
             </View>
           </View>
@@ -355,9 +365,11 @@ export default function Checkout({navigation}) {
             </View>
             <View style={styles.rightBox}>
               <Text style={styles.priceText}>{productPrice}zl</Text>
-              <Text style={styles.priceText}>{moneyForDelivery}zl</Text>
+              <Text style={styles.priceText}>
+                {delivery ? moneyForDelivery : 0}zl
+              </Text>
               <Text style={styles.totalText}>
-                {productPrice + moneyForDelivery}zl
+                {delivery ? productPrice + moneyForDelivery : productPrice}zl
               </Text>
             </View>
           </View>
