@@ -12,8 +12,12 @@ import React, {useEffect, useState} from 'react';
 import {COLORS} from '../Colors';
 import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import store from './store';
+import store from '../store';
 import CookieManager from '@react-native-cookies/cookies';
+import {checkIfLogged, getUserName, LogOut} from '../Utilities';
+import {showMessage} from 'react-native-flash-message';
+import NetInfo from '@react-native-community/netinfo';
+import {LOGOUT, NOINTERNET, SERVER_ERROR} from '../actions';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -21,27 +25,62 @@ const imageWidth = dimensions.width;
 
 export default function Dishes({navigation}) {
   const [dishes, setDishes] = useState([]);
-  // const [isPressed, setPressed] = useState('');
   const route = useRoute();
+  const [phrase, setPhrase] = useState('');
   const url = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantUrl;
   const restaurantName =
     'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
 
+  async function addItemToCasket(dishID) {
+    if (await checkIfLogged()) {
+      const resp = await fetch(
+        'http://10.0.2.2:8082/' +
+          getUserName(store.getState().token) +
+          '/usercart/' +
+          dishID +
+          '/add',
+        {
+          method: 'POST',
+          headers: new Headers({
+            Authorization: 'Bearer ' + store.getState().token,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }),
+        },
+      ).catch(error => {
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
+      });
+      const data = await resp.text();
+      showMessage({
+        message: 'Dodano do koszyka.',
+        type: 'info',
+        backgroundColor: COLORS.second,
+        color: COLORS.main,
+      });
+    } else {
+      LogOut(navigation, store.dispatch);
+    }
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resp = await fetch(url);
+        const resp = await fetch(url).catch(error => {
+          NetInfo.fetch().then(state => {
+            state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+          });
+        });
         const data = await resp.json();
-        setDishes(data.content);
+        setDishes(data);
       } catch (error) {
         console.log('error', error);
       }
     };
     fetchData();
-  }, [route.params.restaurantName]);
+  }, [route.params.restaurantName, url]);
 
   function goToDish(dishUrl) {
-    console.log('DishUrl navigate: ' + dishUrl);
     navigation.navigate('Dish', {
       dishUrl: dishUrl,
     });
@@ -56,42 +95,54 @@ export default function Dishes({navigation}) {
         <View style={styles.searchBar}>
           <Icon name="search" style={styles.icon} />
           <TextInput
+            value={phrase}
+            onChangeText={setPhrase}
             placeholder="Restauracja u Jana"
             style={styles.textSearchBar}
           />
         </View>
-        {dishes.map((item, i) => {
-          return (
-            <View key={i + item.dishId}>
-              <View style={styles.row}>
-                <TouchableOpacity
-                  onPress={() =>
-                    goToDish(restaurantName + '/dishes/' + item.name)
-                  }>
-                  <View style={styles.imageContainer}>
-                    <Image style={styles.image} source={{uri: item.imageUrl}} />
-                  </View>
-                </TouchableOpacity>
-
-                <View style={styles.column}>
-                  <Text style={styles.textTitle}>{item.name}</Text>
-                  <Text style={styles.textDesc}>{item.description}</Text>
-                  <Text style={styles.line} />
-                </View>
-
-                <View style={styles.columnPrice}>
-                  <Text style={styles.textTitle}>CENA</Text>
-                  <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
-                  {store.getState().isLoggedIn ? (
-                    <View style={styles.plusContainer}>
-                      <Icon name="plus-circle" style={styles.iconPlus} />
+        {dishes
+          .filter(function (dish) {
+            return dish.name.toLowerCase().includes(phrase);
+          })
+          .map((item, i) => {
+            return (
+              <View key={i + item.dishId}>
+                <View style={styles.row}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      goToDish(restaurantName + '/dishes/' + item.name)
+                    }>
+                    <View style={styles.imageContainer}>
+                      <Image
+                        style={styles.image}
+                        source={{uri: item.imageUrl}}
+                      />
                     </View>
-                  ) : null}
+                  </TouchableOpacity>
+
+                  <View style={styles.column}>
+                    <Text style={styles.textTitle}>{item.name}</Text>
+                    <Text style={styles.textDesc}>{item.description}</Text>
+                    <Text style={styles.line} />
+                  </View>
+
+                  <View style={styles.columnPrice}>
+                    <Text style={styles.textTitle}>CENA</Text>
+                    <Text style={styles.textPrice}>{item.price + ' zł'}</Text>
+                    {store.getState().isLoggedIn ? (
+                      <TouchableOpacity
+                        onPress={() => addItemToCasket(item.dishId)}>
+                        <View style={styles.plusContainer}>
+                          <Icon name="plus-circle" style={styles.iconPlus} />
+                        </View>
+                      </TouchableOpacity>
+                    ) : null}
+                  </View>
                 </View>
               </View>
-            </View>
-          );
-        })}
+            );
+          })}
       </ScrollView>
     </View>
     // </View>

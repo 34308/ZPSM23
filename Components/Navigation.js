@@ -23,13 +23,15 @@ import {Image, View} from 'react-native';
 import {loginReducer} from './Reducer';
 import {JWT, LOGIN, LOGOUT} from './actions';
 import {useDispatch} from 'react-redux';
-import store from './Screens/store';
+import store from './store';
 import {getData} from './StorageHelper';
 import {isTokenExp, LogOut} from './Utilities';
 import {COLORS} from './Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+import EditProfile from './Screens/EditProfile';
+
 function Navigation() {
   const Drawer = createDrawerNavigator();
   const dispatch = useDispatch();
@@ -68,6 +70,7 @@ function Navigation() {
           backgroundColor: 'white',
           headerTintColor: COLORS.second,
         }}>
+        <Stack.Screen name="EditScreen" component={EditProfile} />
         <Stack.Screen name="Drawer" component={DrawerPart} />
         <Stack.Screen name="Dish" component={Dish} />
         <Stack.Screen name="Dishes" component={Dishes} />
@@ -106,7 +109,7 @@ function Navigation() {
           <View>
             <DrawerItem
               onPress={() => LogOut(props.navigation, dispatch)}
-              label="Logout"
+              label="Wyloguj się"
               labelStyle={{fontSize: 15, color: 'black', fontWeight: 'normal'}}
               icon={() => <Ionicons name="exit" size={22} color="#ccc" />}
             />

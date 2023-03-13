@@ -11,8 +11,12 @@ import {
 import {useState} from 'react';
 import {COLORS} from '../Colors';
 import {useDispatch} from 'react-redux';
-import {LOGIN} from '../actions';
-import store from './store';
+import {LOGIN, LOGOUT, NOINTERNET, SERVER_ERROR} from '../actions';
+import store from '../store';
+import NetInfo from '@react-native-community/netinfo';
+import jwtDecode from 'jwt-decode';
+import {showMessage} from 'react-native-flash-message';
+
 
 export default function Login({navigation}) {
   const [login, setLogin] = useState('');
@@ -54,30 +58,35 @@ export default function Login({navigation}) {
           login: '' + login,
           password: '' + password,
         }),
-      }).then(async response => {
-        if (response.ok) {
-          const data = await response.text();
-          const token=JSON.parse(data).value
-          dispatch({type: LOGIN, payload: '' +token});
-          goToRestaurants();
-        } else {
-          alert('Login Not Succesfull, wrong login or password');
-        }
-      });
+      })
+        .then(async response => {
+          if (response.ok) {
+            const data = await response.text();
+            const token = JSON.parse(data).value;
+            const interval = setTimeout(() => {
+              console.error('logout');
+              showMessage({
+                message: 'Twoja sesja wygasla, zaloguj sie ponownie.',
+                type: 'info',
+                backgroundColor: COLORS.second,
+                color: COLORS.main,
+              });
+              dispatch({type: LOGOUT, payload: '' + token});
+            }, (jwtDecode(token).exp - jwtDecode(token).iat) * 1000);
+            dispatch({type: LOGIN, payload: '' + token});
+            goToRestaurants();
+          } else {
+            alert('Login Not Succesfull, wrong login or password');
+          }
+        })
+        .catch(error => {
+          NetInfo.fetch().then(state => {
+            state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+          });
+        });
     } catch (error) {
       console.error(error);
     }
-  }
-  async function getUser() {
-    const resp = await fetch('http://10.0.2.2:8082/broniq1/user', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: 'Bearer ' + store.getState().token,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      }),
-    });
-    const data = await resp.text();
-    console.log(data);
   }
 
   return (

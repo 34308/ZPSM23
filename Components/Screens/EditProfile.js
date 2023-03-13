@@ -8,13 +8,16 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../Colors';
 import NetInfo from '@react-native-community/netinfo';
 import {NOINTERNET, SERVER_ERROR} from '../actions';
+import store from '../store';
+import {checkIfLoggedAndLogout, getUserName} from '../Utilities';
+import {showMessage} from 'react-native-flash-message';
 
-export default function Registration({navigation}) {
+export default function EditProfile({navigation}) {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
@@ -27,19 +30,40 @@ export default function Registration({navigation}) {
   const [exDate, setexDate] = useState('');
   const [pageChanged, changePage] = useState(false);
   //Przechodzi do login i czyści fieldy, ewentualnie do zmiany
-  const GoToLogin = () => {
-    navigation.navigate('Login');
-    setLogin('');
-    setPassword('');
-    setPasswordRepeat('');
-    setName('');
-    setSurname('');
-    setAdress('');
-    setEmail('');
-    setCardNumber('');
-    setCvv('');
-    setexDate('');
-  };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getUser();
+    });
+    async function getUser() {
+      const resp = await fetch(
+        'http://10.0.2.2:8082/' + getUserName(store.getState().token) + '/user',
+        {
+          method: 'GET',
+          headers: new Headers({
+            Authorization: 'Bearer ' + store.getState().token,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }),
+        },
+      ).catch(error => {
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
+      });
+      const data = await resp.json();
+      setAdress(data.address);
+      setEmail(data.email);
+      setLogin(data.login);
+      setexDate(data.expireDate);
+      setName(data.name);
+      setCardNumber(data.debitCardNumber);
+      setSurname(data.surname);
+      setCvv(data.cvv);
+    }
+    return unsubscribe;
+  });
+  function GoToSetings() {
+    navigation.goBack();
+  }
 
   //Waliduje poprawność wprowadzanych danych oraz sprawdza czy wymagane dane zostały wprowadzone
   const ValidateFields = async () => {
@@ -74,38 +98,49 @@ export default function Registration({navigation}) {
       alert('Hasła się nie zgadzają.');
     } else {
       try {
-        Register();
-        alert('User added.');
-        GoToLogin();
+        changeData();
       } catch (error) {
         console.error(error);
       }
     }
   };
 
-  async function Register() {
+  async function changeData() {
     try {
-      fetch('http://10.0.2.2:8082/user/registration', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      fetch(
+        'http://10.0.2.2:8082/' +
+          getUserName(store.getState().token) +
+          '/user/update',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + store.getState().token,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            login: login.toString(),
+            password: password.toString(),
+            name: '' + name,
+            surname: surname.toString(),
+            address: address.toString(),
+            debitCardNumber: cardNumber.toString(),
+            expireDate: exDate.toString(),
+            cvv: cvv.toString(),
+            email: email.toString(),
+          }),
         },
-        body: JSON.stringify({
-          login: login.toString(),
-          password: password.toString(),
-          name: '' + name,
-          surname: surname.toString(),
-          address: address.toString(),
-          debitCardNumber: cardNumber.toString(),
-          expireDate: exDate.toString(),
-          cvv: cvv.toString(),
-          email: email.toString(),
-        }),
-      })
+      )
         .then(r => {
           if (!r.ok) {
-            alert('niepoprawna Rejestaracja blad serwera');
+            alert('niepoprawna Update informacji, blad serwera');
+          } else {
+            showMessage({
+              message: 'poprawnie zmieniono.',
+              type: 'info',
+              backgroundColor: COLORS.second,
+              color: COLORS.main,
+            });
+            GoToSetings();
           }
           console.log(r.status);
         })
@@ -127,7 +162,7 @@ export default function Registration({navigation}) {
             <View style={styles.logoContainer}>
               {/*<Image style={styles.logo} source={require('../Screens/logo.png')} />*/}
               <View style={styles.column}>
-                <Text style={styles.textWelcome}>Zarejestruj się!</Text>
+                <Text style={styles.textWelcome}>Zmien Swoje Dane</Text>
                 {/*<Image*/}
                 {/*  style={styles.logo}*/}
                 {/*  source={require('../Screens/food.png')}*/}
@@ -212,15 +247,15 @@ export default function Registration({navigation}) {
                 />
               </View>
               <TouchableOpacity style={styles.button} onPress={ValidateFields}>
-                <Text style={styles.text}>Zarejestruj się</Text>
+                <Text style={styles.text}>Zmien Dane</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
         <View>
           <TouchableOpacity>
-            <Text style={styles.register} onPress={GoToLogin}>
-              Masz już konto? Zaloguj się.
+            <Text style={styles.register} onPress={GoToSetings}>
+              Zminiłeś zdanie? Wróc do ustawien.
             </Text>
           </TouchableOpacity>
         </View>

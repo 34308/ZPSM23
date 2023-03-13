@@ -7,15 +7,26 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AntDesignIcon from 'react-native-vector-icons/EvilIcons';
 import {COLORS} from '../Colors';
-import store from './store';
-import {getUserName} from '../Utilities';
+import store from '../store';
+import {
+  checkIfLogged,
+  checkIfLoggedAndLogout,
+  getUserName,
+  LogOut,
+} from '../Utilities';
 import RNFetchBlob from 'rn-fetch-blob';
+import NetInfo from '@react-native-community/netinfo';
+import CheckBox from '@react-native-community/checkbox';
+
+import {NOINTERNET, SERVER_ERROR} from '../actions';
+import {showMessage} from 'react-native-flash-message';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -25,10 +36,12 @@ export default function Checkout({navigation}) {
   const [currentUser, setCurrentUser] = useState('');
   const [cartItems, setCartItems] = useState([]);
   const [productPrice, setProductPrice] = useState('');
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [delivery, setDelivery] = useState(false);
   const moneyForDelivery = 15;
   const [note, setNote] = React.useState('brak');
-  const [isEmpty, empty] = React.useState(false);
+  const [isEmpty, empty] = React.useState(true);
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const resp = await fetch(
@@ -42,7 +55,11 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      NetInfo.fetch().then(state => {
+        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+      });
+    });
     if (resp.ok) {
       empty(false);
       const text = await resp.text();
@@ -55,6 +72,7 @@ export default function Checkout({navigation}) {
         }, 0),
       );
     } else {
+      empty(true);
       setCartItems([]);
     }
 
@@ -64,6 +82,7 @@ export default function Checkout({navigation}) {
   }, []);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      checkIfLoggedAndLogout(navigation, store);
       getCart();
     });
     async function getCart() {
@@ -78,7 +97,11 @@ export default function Checkout({navigation}) {
             'Content-Type': 'application/x-www-form-urlencoded',
           }),
         },
-      );
+      ).catch(error => {
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
+      });
       if (resp.ok) {
         empty(false);
         const text = await resp.text();
@@ -90,6 +113,7 @@ export default function Checkout({navigation}) {
           }, 0),
         );
       } else {
+        empty(true);
         setCartItems([]);
       }
     }
@@ -98,65 +122,84 @@ export default function Checkout({navigation}) {
   }, [navigation]);
 
   async function checkOut() {
-    setRefreshing(true);
-    const date = new Date();
-    let dirs = RNFetchBlob.fs.dirs;
-    const url =
-      'http://10.0.2.2:8082/' +
-      getUserName(store.getState().token) +
-      '/usercart/checkout/' +
-      note.replace(' ', '_') +
-      '/true';
-
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: 'Receipt needs to be saved on your device',
-        message:
-          'Receipt needs to be saved on your device if you dont want to save it on your device it will also be send on your email',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted) {
-      if (Platform.OS === 'android') {
-        RNFetchBlob.config({
-          fileCache: false,
-          addAndroidDownloads: {
-            useDownloadManager: true,
-            notification: true,
-            mime: 'application/pdf',
-            title:
-              'Receipt from ' +
-              date.getDate() +
-              '-' +
-              date.getMonth() +
-              '-' +
-              date.getFullYear(),
-            description: 'Receipt for order in Szama(n)',
-            path: dirs.DownloadDir + 'Receipt.pdf',
-          },
-        })
-          .fetch('get', url, {
-            Authorization: 'Bearer ' + store.getState().token,
-            'Cache-Control': 'no-store',
+    if (note === '') {
+      setNote('brak');
+    }
+    if (await checkIfLogged()) {
+      setRefreshing(true);
+      const date = new Date();
+      let dirs = RNFetchBlob.fs.dirs;
+      const url =
+        'http://10.0.2.2:8082/' +
+        getUserName(store.getState().token) +
+        '/usercart/checkout/' +
+        note.replaceAll(' ', '_').replaceAll('\n', '_') +
+        '/' +
+        delivery;
+      console.log(url);
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Receipt needs to be saved on your device',
+          message:
+            'Receipt needs to be saved on your device if you dont want to save it on your device it will also be send on your email',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted) {
+        if (Platform.OS === 'android') {
+          RNFetchBlob.config({
+            fileCache: false,
+            addAndroidDownloads: {
+              useDownloadManager: true,
+              notification: true,
+              mime: 'application/pdf',
+              title:
+                'Receipt from ' +
+                date.getDate() +
+                '-' +
+                (date.getMonth() + 1) +
+                '-' +
+                date.getFullYear(),
+              description: 'Receipt for order in Szama(n)',
+              path: dirs.DownloadDir + 'Receipt.pdf',
+            },
           })
-          .then(res => {
-            setRefreshing(false);
-            onRefresh();
-            setProductPrice(0);
-            empty(true);
-          })
-          .catch((errorMessage, statusCode) => {
-            console.error(errorMessage, statusCode);
-          });
+            .fetch('get', url, {
+              Authorization: 'Bearer ' + store.getState().token,
+              'Cache-Control': 'no-store',
+            })
+            .then(res => {
+              setRefreshing(false);
+              onRefresh();
+              setProductPrice(0);
+              empty(true);
+            })
+            .catch((errorMessage, statusCode) => {
+              console.error(errorMessage, statusCode);
+            });
+        }
+      } else {
+        showMessage({
+          message: 'Twoja Recepta została wysłana na email.',
+          type: 'info',
+          backgroundColor: COLORS.second,
+          color: COLORS.main,
+        });
       }
     } else {
-      alert('Receipt was send on your Email');
+      LogOut(navigation, store.dispatch);
+      showMessage({
+        message: 'Twoja sesja wygasla, zaloguj sie ponownie.',
+        type: 'info',
+        backgroundColor: COLORS.second,
+        color: COLORS.main,
+      });
     }
   }
-  async function addItem(id, numberOfProduct) {
+  async function updateItem(id, numberOfProduct) {
     const resp = await fetch(
       'http://10.0.2.2:8082/' +
         getUserName(store.getState().token) +
@@ -171,19 +214,34 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    )
+      .then(response => {
+        if (!response.ok) {
+          LogOut(navigation, store.dispatch);
+          showMessage({
+            message: 'Twoja sesja wygasla, zaloguj sie ponownie.',
+            type: 'info',
+            backgroundColor: COLORS.second,
+            color: COLORS.main,
+          });
+        }
+      })
+      .catch(error => {
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
+      });
     const data = await resp.text();
     console.log(data);
     onRefresh();
   }
-  async function deleteItem(id, numberOfProduct) {
+  async function deleteItemFromCart(dishId) {
     const resp = await fetch(
       'http://10.0.2.2:8082/' +
         getUserName(store.getState().token) +
         '/usercart/' +
-        id +
-        '/save/' +
-        numberOfProduct,
+        dishId +
+        '/remove',
       {
         method: 'POST',
         headers: new Headers({
@@ -191,13 +249,30 @@ export default function Checkout({navigation}) {
           'Content-Type': 'application/x-www-form-urlencoded',
         }),
       },
-    );
+    ).catch(error => {
+      NetInfo.fetch().then(state => {
+        state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+      });
+    });
     const data = await resp.text();
     console.log(data);
     onRefresh();
+  }
+  //Zabezpieczenie przed ujemną liczbą dań
+  function decreaseNumberOfItems(dishId, countOfDish) {
+    countOfDish = countOfDish - 1;
+    if (countOfDish > 0) {
+      updateItem(dishId, parseInt(countOfDish));
+    } else if (countOfDish === 0) {
+      deleteItemFromCart(dishId);
+    }
   }
 
-  return (
+  return isEmpty ? (
+    <View style={styles.container}>
+      <Text style={styles.emptyText}>Brak dań.</Text>
+    </View>
+  ) : (
     <View style={styles.container}>
       <ScrollView
         refreshControl={
@@ -231,9 +306,9 @@ export default function Checkout({navigation}) {
                     <View style={styles.column}>
                       <TouchableOpacity
                         onPress={() =>
-                          deleteItem(
+                          decreaseNumberOfItems(
                             item.dish.dishId,
-                            parseInt(item.countOfDish) - 1,
+                            item.countOfDish,
                           )
                         }>
                         <AntDesignIcon name="minus" style={styles.icon} />
@@ -245,7 +320,7 @@ export default function Checkout({navigation}) {
                     <View style={styles.column}>
                       <TouchableOpacity
                         onPress={() =>
-                          addItem(
+                          updateItem(
                             item.dish.dishId,
                             parseInt(item.countOfDish) + 1,
                           )
@@ -254,15 +329,34 @@ export default function Checkout({navigation}) {
                       </TouchableOpacity>
                     </View>
                   </View>
-                  {/*<View style={styles.column}>*/}
-                  {/*  <Text style={styles.priceText}>{item.dish.price}zl</Text>*/}
-                  {/*</View>*/}
                 </View>
               </View>
             </View>
           );
         })}
         <View style={[styles.box, styles.marginBox]}>
+          <View style={styles.inputMargin}>
+            <View style={[styles.card, styles.elevation]}>
+              <Text style={styles.infoText}>Dodatkowe informacje</Text>
+              <TextInput
+                style={styles.input}
+                value={note}
+                multiline={true}
+                onChangeText={setNote}
+                placeholder="Informacje do zamówienia."
+                keyboardType="default"
+              />
+            </View>
+            <View style={[styles.card, styles.elevation]}>
+              <Text style={styles.infoText}>Dostawa?</Text>
+              <CheckBox
+                style={{alignSelf: 'center'}}
+                disabled={false}
+                value={delivery}
+                onValueChange={newValue => setDelivery(newValue)}
+              />
+            </View>
+          </View>
           <View style={styles.row}>
             <View>
               <Text style={styles.priceText}>Razem: </Text>
@@ -271,9 +365,11 @@ export default function Checkout({navigation}) {
             </View>
             <View style={styles.rightBox}>
               <Text style={styles.priceText}>{productPrice}zl</Text>
-              <Text style={styles.priceText}>{moneyForDelivery}zl</Text>
+              <Text style={styles.priceText}>
+                {delivery ? moneyForDelivery : 0}zl
+              </Text>
               <Text style={styles.totalText}>
-                {productPrice + moneyForDelivery}zl
+                {delivery ? productPrice + moneyForDelivery : productPrice}zl
               </Text>
             </View>
           </View>
@@ -450,5 +546,20 @@ const styles = StyleSheet.create({
   marginBox: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  input: {
+    marginLeft: 10,
+  },
+  inputMargin: {
+    marginBottom: 20,
+  },
+  infoText: {
+    textAlign: 'center',
+    color: COLORS.second,
+    fontSize: 18,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: COLORS.second,
   },
 });
