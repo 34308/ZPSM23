@@ -27,20 +27,22 @@ import CheckBox from '@react-native-community/checkbox';
 
 import {NOINTERNET, SERVER_ERROR} from '../actions';
 import {showMessage} from 'react-native-flash-message';
+import {Button} from 'react-native-elements';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
 const imageWidth = dimensions.width;
 
 export default function Checkout({navigation}) {
-  const [currentUser, setCurrentUser] = useState('');
   const [cartItems, setCartItems] = useState([]);
-  const [productPrice, setProductPrice] = useState('');
+  const [productPrice, setProductPrice] = useState(0.0);
   const [refreshing, setRefreshing] = useState(false);
   const [delivery, setDelivery] = useState(false);
-  const moneyForDelivery = 15;
+  const moneyForDelivery = 15.0;
   const [note, setNote] = React.useState('brak');
+  const [discount, setDiscount] = useState(0);
   const [isEmpty, empty] = React.useState(true);
+  const [discountCode, setDiscountCode] = React.useState('brak');
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -68,7 +70,7 @@ export default function Checkout({navigation}) {
       setCartItems(text.content);
       setProductPrice(
         text.content.reduce((a, c) => {
-          return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
+          return a + parseFloat(c.dish.price) * parseFloat(c.countOfDish);
         }, 0),
       );
     } else {
@@ -109,7 +111,7 @@ export default function Checkout({navigation}) {
         setCartItems(text.content);
         setProductPrice(
           text.content.reduce((a, c) => {
-            return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
+            return a + parseFloat(c.dish.price) * parseFloat(c.countOfDish);
           }, 0),
         );
       } else {
@@ -268,6 +270,34 @@ export default function Checkout({navigation}) {
     }
   }
 
+  function getDiscount() {
+    fetch('http://10.0.2.2:8082' + '/discounts/unlockDiscount', {
+      method: 'Post',
+      headers: new Headers({
+        Authorization: 'Bearer ' + store.getState().token,
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({
+        unlockCode: '' + discountCode,
+        userLogin: getUserName(store.getState().token),
+      }),
+    })
+      .then(async response => {
+        let text = await response.text();
+        let json = await JSON.parse(text);
+        console.log(json.savedMoney);
+        if (cartItems.find(item => item.dish.name === json.name)) {
+          setDiscount(parseFloat(json.savedMoney));
+        }
+      })
+      .catch(error => {
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
+      });
+    return undefined;
+  }
+
   return isEmpty ? (
     <View style={styles.container}>
       <Text style={styles.emptyText}>Brak dań.</Text>
@@ -297,7 +327,10 @@ export default function Checkout({navigation}) {
                     <View style={styles.innerColumn}>
                       <Text style={styles.title}>{item.dish.name}</Text>
                       <Text style={styles.sumText}>
-                        {parseInt(item.countOfDish) * parseInt(item.dish.price)}
+                        {(
+                          parseInt(item.countOfDish) *
+                          parseFloat(item.dish.price)
+                        ).toFixed(2)}
                         zl
                       </Text>
                     </View>
@@ -356,20 +389,46 @@ export default function Checkout({navigation}) {
                 onValueChange={newValue => setDelivery(newValue)}
               />
             </View>
+            <View style={[styles.card, styles.elevation]}>
+              <Text style={styles.infoText}>Kod Rabatowy?</Text>
+              <TextInput
+                style={styles.input}
+                value={discountCode}
+                multiline={false}
+                onChangeText={setDiscountCode}
+                placeholder="Informacje do zamówienia."
+                keyboardType="default"
+              />
+              <Button
+                buttonStyle={styles.buttonCode}
+                onPress={() => getDiscount()}
+                title="Sprawdź"
+              />
+            </View>
           </View>
+
           <View style={styles.row}>
             <View>
               <Text style={styles.priceText}>Razem: </Text>
               <Text style={styles.priceText}>Koszt dostawy: </Text>
+              {discount === 0 ? null : (
+                <Text style={styles.priceText}>Znizka: </Text>
+              )}
               <Text style={styles.totalText}>Suma: </Text>
             </View>
             <View style={styles.rightBox}>
-              <Text style={styles.priceText}>{productPrice}zl</Text>
+              <Text style={styles.priceText}>{productPrice.toFixed(2)}zl</Text>
               <Text style={styles.priceText}>
                 {delivery ? moneyForDelivery : 0}zl
               </Text>
+              {discount===0? null:<Text style={styles.priceText}>
+                {discount.toFixed(2)}zl
+              </Text>}
               <Text style={styles.totalText}>
-                {delivery ? productPrice + moneyForDelivery : productPrice}zl
+                {delivery
+                  ? (productPrice - discount + moneyForDelivery).toFixed(2)
+                  : (productPrice - discount).toFixed(2)}
+                zl
               </Text>
             </View>
           </View>
@@ -534,6 +593,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 250,
     height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.second,
+  },
+  buttonCode: {
     borderRadius: 20,
     backgroundColor: COLORS.second,
   },
