@@ -421,9 +421,9 @@ export default function Checkout({navigation}) {
               <Text style={styles.priceText}>
                 {delivery ? moneyForDelivery : 0}zl
               </Text>
-              {discount===0? null:<Text style={styles.priceText}>
-                {discount.toFixed(2)}zl
-              </Text>}
+              {discount === 0 ? null : (
+                <Text style={styles.priceText}>{discount.toFixed(2)}zl</Text>
+              )}
               <Text style={styles.totalText}>
                 {delivery
                   ? (productPrice - discount + moneyForDelivery).toFixed(2)
