@@ -62,12 +62,12 @@ export default function Checkout({navigation}) {
     });
     if (resp.ok) {
       empty(false);
-      const text = await resp.text();
-      let data = JSON.parse(text);
+      const text = await resp.json();
+      // let data = JSON.parse(text);
 
-      setCartItems(data.content);
+      setCartItems(text.content);
       setProductPrice(
-        data.content.reduce((a, c) => {
+        text.content.reduce((a, c) => {
           return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
         }, 0),
       );
@@ -104,11 +104,11 @@ export default function Checkout({navigation}) {
       });
       if (resp.ok) {
         empty(false);
-        const text = await resp.text();
-        let data = JSON.parse(text);
-        setCartItems(data.content);
+        const text = await resp.json();
+        // let data = JSON.parse(text);
+        setCartItems(text.content);
         setProductPrice(
-          data.content.reduce((a, c) => {
+          text.content.reduce((a, c) => {
             return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
           }, 0),
         );

@@ -14,7 +14,7 @@ export function LogOut(navigation, dispatch) {
   dispatch({
     type: LOGOUT,
   });
-  navigation.navigate('Restaurants');
+  navigation.goBack();
 }
 export function checkIfLoggedAndLogout(navigation, store) {
   fetch('http://10.0.2.2:8082/islogged', {
