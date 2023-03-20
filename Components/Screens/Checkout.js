@@ -42,7 +42,7 @@ export default function Checkout({navigation}) {
   const [note, setNote] = React.useState('brak');
   const [discount, setDiscount] = useState(0);
   const [isEmpty, empty] = React.useState(true);
-  const [discountCode, setDiscountCode] = React.useState('brak');
+  const [discountCode, setDiscountCode] = React.useState('');
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -137,66 +137,43 @@ export default function Checkout({navigation}) {
       const url =
         'http://10.0.2.2:8082/' +
         getUserName(store.getState().token) +
-        '/usercart/checkout/' +
-        note.replaceAll(' ', '_').replaceAll('\n', '_') +
-        '/' +
-        delivery +
-        '/' +
-        discountCode;
+        '/usercart/checkout';
+
       console.log(url);
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Receipt needs to be saved on your device',
-          message:
-            'Receipt needs to be saved on your device if you dont want to save it on your device it will also be send on your email',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted) {
-        if (Platform.OS === 'android') {
-          RNFetchBlob.config({
-            fileCache: false,
-            addAndroidDownloads: {
-              useDownloadManager: true,
-              notification: true,
-              mime: 'application/pdf',
-              title:
-                'Receipt from ' +
-                date.getDate() +
-                '-' +
-                (date.getMonth() + 1) +
-                '-' +
-                date.getFullYear(),
-              description: 'Receipt for order in Szama(n)',
-              path: dirs.DownloadDir + 'Receipt.pdf',
-            },
-          })
-            .fetch('GET', url, {
-              Authorization: 'Bearer ' + store.getState().token,
-              'Cache-Control': 'no-store',
-            })
-            .then(res => {
-              console.log('status:'+res.text());
-              setRefreshing(false);
-              onRefresh();
-              setProductPrice(0);
-              empty(true);
-            })
-            .catch((errorMessage, statusCode) => {
-              console.error(errorMessage, statusCode);
-            });
-        }
-      } else {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify({
+          discountCode: '' + discountCode,
+          note: '' + note,
+          delivery: '' + delivery,
+        }),
+      });
+
+      if (res.ok) {
         showMessage({
           message: 'Twoja Recepta została wysłana na email.',
           type: 'info',
           backgroundColor: COLORS.second,
           color: COLORS.main,
         });
+      } else {
+        const message = await JSON.parse(await res.text()).message;
+        showMessage({
+          message: '' + message,
+          type: 'info',
+          backgroundColor: COLORS.second,
+          color: COLORS.main,
+        });
       }
+      setRefreshing(false);
+      onRefresh();
+      setProductPrice(0);
+      setDiscount(0);
+      empty(true);
     } else {
       LogOut(navigation, store.dispatch);
       showMessage({
