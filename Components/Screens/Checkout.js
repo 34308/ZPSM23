@@ -126,18 +126,23 @@ export default function Checkout({navigation}) {
   async function checkOut() {
     if (note === '') {
       setNote('brak');
+    } else if (discountCode === '') {
+      setDiscountCode('brak');
     }
     if (await checkIfLogged()) {
       setRefreshing(true);
       const date = new Date();
       let dirs = RNFetchBlob.fs.dirs;
+
       const url =
         'http://10.0.2.2:8082/' +
         getUserName(store.getState().token) +
         '/usercart/checkout/' +
         note.replaceAll(' ', '_').replaceAll('\n', '_') +
         '/' +
-        delivery;
+        delivery +
+        '/' +
+        discountCode;
       console.log(url);
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -169,11 +174,12 @@ export default function Checkout({navigation}) {
               path: dirs.DownloadDir + 'Receipt.pdf',
             },
           })
-            .fetch('get', url, {
+            .fetch('GET', url, {
               Authorization: 'Bearer ' + store.getState().token,
               'Cache-Control': 'no-store',
             })
             .then(res => {
+              console.log('status:'+res.text());
               setRefreshing(false);
               onRefresh();
               setProductPrice(0);
