@@ -1,5 +1,5 @@
 import jwtDecode from 'jwt-decode';
-import {LOGOUT} from './actions';
+import { API_URL, LOGOUT } from "./actions";
 import store from './store';
 import {showMessage} from 'react-native-flash-message';
 import {COLORS} from './Colors';
@@ -18,7 +18,7 @@ export function LogOut(navigation, dispatch) {
   navigation.goBack();
 }
 export function checkIfLoggedAndLogout(navigation, store) {
-  fetch('http://10.0.2.2:8082/islogged', {
+  fetch(API_URL + '/islogged', {
     method: 'get',
     headers: {Authorization: 'Bearer ' + store.getState().token},
   }).then(response => {
@@ -36,7 +36,7 @@ export function checkIfLoggedAndLogout(navigation, store) {
   });
 }
 export async function checkIfLogged() {
-  const response = await fetch('http://10.0.2.2:8082/islogged', {
+  const response = await fetch(API_URL + '/islogged', {
     method: 'get',
     headers: {Authorization: 'Bearer ' + store.getState().token},
   });
@@ -58,7 +58,7 @@ export async function checkIfServerActive() {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), httpTimeout);
   try {
-    const response = await fetch('https://projektbigdata.azurewebsites.net/activity', {signal: controller.signal})
+    const response = await fetch(API_URL + '/activity', {signal: controller.signal})
     console.log(response)
     if (response.status === 200) {
       return true

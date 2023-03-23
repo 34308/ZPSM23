@@ -20,7 +20,7 @@ LogBox.ignoreAllLogs(); //Ignore all log notifications
 import {getUserName, LogOut} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
-import {NOINTERNET, SERVER_ERROR} from '../actions';
+import { API_URL, NOINTERNET, SERVER_ERROR } from "../actions";
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -63,7 +63,7 @@ export default function Dish({navigation}) {
 
     async function getCart() {
       const resp2 = await fetch(
-        'http://10.0.2.2:8082/' +
+        API_URL + '/' +
           getUserName(store.getState().token) +
           '/usercart?p=0',
         {
@@ -110,7 +110,7 @@ export default function Dish({navigation}) {
   async function addItemToCasket(dishID, numberOfProduct) {
     if (numberOfProduct !== 0) {
       const resp = await fetch(
-        'http://10.0.2.2:8082/' +
+        API_URL + '/' +
           getUserName(store.getState().token) +
           '/usercart/' +
           dishID +

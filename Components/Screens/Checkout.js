@@ -25,7 +25,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import NetInfo from '@react-native-community/netinfo';
 import CheckBox from '@react-native-community/checkbox';
 
-import {NOINTERNET, SERVER_ERROR} from '../actions';
+import { API_URL, NOINTERNET, SERVER_ERROR } from "../actions";
 import {showMessage} from 'react-native-flash-message';
 import {Button} from 'react-native-elements';
 
@@ -47,7 +47,7 @@ export default function Checkout({navigation}) {
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const resp = await fetch(
-      'http://10.0.2.2:8082/' +
+      API_URL + '/' +
         getUserName(store.getState().token) +
         '/usercart?p=0',
       {
@@ -89,7 +89,7 @@ export default function Checkout({navigation}) {
     });
     async function getCart() {
       const resp = await fetch(
-        'http://10.0.2.2:8082/' +
+        API_URL + '/' +
           getUserName(store.getState().token) +
           '/usercart?p=0',
         {
@@ -135,7 +135,7 @@ export default function Checkout({navigation}) {
       let dirs = RNFetchBlob.fs.dirs;
 
       const url =
-        'http://10.0.2.2:8082/' +
+        API_URL + '/' +
         getUserName(store.getState().token) +
         '/usercart/checkout';
 
@@ -186,7 +186,7 @@ export default function Checkout({navigation}) {
   }
   async function updateItem(id, numberOfProduct) {
     const resp = await fetch(
-      'http://10.0.2.2:8082/' +
+      API_URL + '/' +
         getUserName(store.getState().token) +
         '/usercart/' +
         id +
@@ -222,7 +222,7 @@ export default function Checkout({navigation}) {
   }
   async function deleteItemFromCart(dishId) {
     const resp = await fetch(
-      'http://10.0.2.2:8082/' +
+      API_URL + '/' +
         getUserName(store.getState().token) +
         '/usercart/' +
         dishId +
@@ -254,7 +254,7 @@ export default function Checkout({navigation}) {
   }
 
   function getDiscount() {
-    fetch('http://10.0.2.2:8082' + '/discounts/unlockDiscount', {
+    fetch(API_URL + '/discounts/unlockDiscount', {
       method: 'Post',
       headers: new Headers({
         Authorization: 'Bearer ' + store.getState().token,

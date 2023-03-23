@@ -13,7 +13,7 @@ import {COLORS} from '../Colors';
 import {re} from '@babel/core/lib/vendor/import-meta-resolve';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import NetInfo from '@react-native-community/netinfo';
-import {LOGOUT, NOINTERNET, SERVER_ERROR} from '../actions';
+import { API_URL, LOGOUT, NOINTERNET, SERVER_ERROR } from "../actions";
 
 
 const dimensions = Dimensions.get('window');
@@ -34,7 +34,7 @@ export default function Restaurants({navigation}) {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchData();
     });
-    const url = 'http://10.0.2.2:8082/restaurants';
+    const url = API_URL + '/restaurants';
 
     const fetchData = async () => {
       try {

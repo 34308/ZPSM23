@@ -8,8 +8,6 @@ import Navigation from './Components/Navigation';
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { checkIfServerActive } from "./Components/Utilities";
 import { COLORS } from "./Components/Colors";
-import { Text, View } from "react-native";
-import ServerInactive from "./Components/Screens/ServerInactive";
 
 const SERVER_ACTIVE = 'active';
 const SERVER_INACTIVE = 'inactive';

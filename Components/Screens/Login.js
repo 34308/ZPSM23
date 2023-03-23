@@ -11,7 +11,7 @@ import {
 import {useState} from 'react';
 import {COLORS} from '../Colors';
 import {useDispatch} from 'react-redux';
-import {LOGIN, LOGOUT, NOINTERNET, SERVER_ERROR} from '../actions';
+import { API_URL, LOGIN, LOGOUT, NOINTERNET, SERVER_ERROR } from "../actions";
 import store from '../store';
 import NetInfo from '@react-native-community/netinfo';
 import jwtDecode from 'jwt-decode';
@@ -48,7 +48,7 @@ export default function Login({navigation}) {
 
   async function logIn() {
     try {
-      fetch('http://10.0.2.2:8082/user/login', {
+      fetch(API_URL + '/user/login', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

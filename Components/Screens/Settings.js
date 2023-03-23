@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {getUserName, LogOut} from '../Utilities';
 import store from '../store';
 import NetInfo from '@react-native-community/netinfo';
-import {NOINTERNET, SERVER_ERROR} from '../actions';
+import { API_URL, NOINTERNET, SERVER_ERROR } from "../actions";
 
 export default function Settings({navigation}) {
   function deleteAccount() {
@@ -28,7 +28,7 @@ export default function Settings({navigation}) {
 
   async function deletePost() {
     let user = getUserName(store.getState().token);
-    let url = 'http://10.0.2.2:8082/' + user + '/user/delete';
+    let url = API_URL + '/' + user + '/user/delete';
     try {
       await fetch(url, {
         method: 'DELETE',

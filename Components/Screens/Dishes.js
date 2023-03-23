@@ -17,7 +17,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import {checkIfLogged, getUserName, LogOut} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
-import {LOGOUT, NOINTERNET, SERVER_ERROR} from '../actions';
+import { API_URL, LOGOUT, NOINTERNET, SERVER_ERROR } from "../actions";
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
@@ -27,14 +27,14 @@ export default function Dishes({navigation}) {
   const [dishes, setDishes] = useState([]);
   const route = useRoute();
   const [phrase, setPhrase] = useState('');
-  const url = 'http://10.0.2.2:8082/restaurants/' + route.params.restaurantUrl;
+  const url = API_URL + '/restaurants/' + route.params.restaurantUrl;
   const restaurantName =
-    'http://10.0.2.2:8082/restaurants/' + route.params.restaurantName;
+    API_URL + '/restaurants/' + route.params.restaurantName;
 
   async function addItemToCasket(dishID) {
     if (await checkIfLogged()) {
       const resp = await fetch(
-        'http://10.0.2.2:8082/' +
+        API_URL + '/' +
           getUserName(store.getState().token) +
           '/usercart/' +
           dishID +

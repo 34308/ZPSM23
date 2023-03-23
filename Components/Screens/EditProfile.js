@@ -12,7 +12,7 @@ import {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../Colors';
 import NetInfo from '@react-native-community/netinfo';
-import {NOINTERNET, SERVER_ERROR} from '../actions';
+import { API_URL, NOINTERNET, SERVER_ERROR } from "../actions";
 import store from '../store';
 import {checkIfLoggedAndLogout, getUserName} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
@@ -36,7 +36,7 @@ export default function EditProfile({navigation}) {
     });
     async function getUser() {
       const resp = await fetch(
-        'http://10.0.2.2:8082/' + getUserName(store.getState().token) + '/user',
+        API_URL + '/' + getUserName(store.getState().token) + '/user',
         {
           method: 'GET',
           headers: new Headers({
@@ -108,7 +108,7 @@ export default function EditProfile({navigation}) {
   async function changeData() {
     try {
       fetch(
-        'http://10.0.2.2:8082/' +
+        API_URL + '/' +
           getUserName(store.getState().token) +
           '/user/update',
         {
