@@ -17,17 +17,16 @@ import {COLORS} from '../Colors';
 import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
-import { getUserName, LogOut} from '../Utilities';
+import {getUserName, LogOut} from '../Utilities';
 import {showMessage} from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
 import {NOINTERNET, SERVER_ERROR} from '../actions';
-import navigation from '../Navigation';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
 const imageWidth = dimensions.width;
 
-export default function Dish() {
+export default function Dish({navigation}) {
   const [dish, setDish] = useState([]);
   const [counter, setCounter] = useState(0);
   const route = useRoute();
@@ -61,6 +60,7 @@ export default function Dish() {
         console.log('error', error);
       }
     };
+
     async function getCart() {
       const resp2 = await fetch(
         'http://10.0.2.2:8082/' +
@@ -78,6 +78,8 @@ export default function Dish() {
           state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
         });
       });
+      console.log(resp2.text());
+
       const text = await resp2.text();
       let data2 = JSON.parse(text);
 
@@ -96,7 +98,7 @@ export default function Dish() {
       }
     }
     fetchData();
-    getCart();
+    store.getState().isLoggedIn ? getCart() : null;
   }, [dish.name, url]);
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);

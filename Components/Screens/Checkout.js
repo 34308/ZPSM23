@@ -27,20 +27,22 @@ import CheckBox from '@react-native-community/checkbox';
 
 import {NOINTERNET, SERVER_ERROR} from '../actions';
 import {showMessage} from 'react-native-flash-message';
+import {Button} from 'react-native-elements';
 
 const dimensions = Dimensions.get('window');
 const imageHeight = Math.round((dimensions.width * 9) / 16);
 const imageWidth = dimensions.width;
 
 export default function Checkout({navigation}) {
-  const [currentUser, setCurrentUser] = useState('');
   const [cartItems, setCartItems] = useState([]);
-  const [productPrice, setProductPrice] = useState('');
+  const [productPrice, setProductPrice] = useState(0.0);
   const [refreshing, setRefreshing] = useState(false);
   const [delivery, setDelivery] = useState(false);
-  const moneyForDelivery = 15;
+  const moneyForDelivery = 15.0;
   const [note, setNote] = React.useState('brak');
+  const [discount, setDiscount] = useState(0);
   const [isEmpty, empty] = React.useState(true);
+  const [discountCode, setDiscountCode] = React.useState('');
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -62,13 +64,13 @@ export default function Checkout({navigation}) {
     });
     if (resp.ok) {
       empty(false);
-      const text = await resp.text();
-      let data = JSON.parse(text);
+      const text = await resp.json();
+      // let data = JSON.parse(text);
 
-      setCartItems(data.content);
+      setCartItems(text.content);
       setProductPrice(
-        data.content.reduce((a, c) => {
-          return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
+        text.content.reduce((a, c) => {
+          return a + parseFloat(c.dish.price) * parseFloat(c.countOfDish);
         }, 0),
       );
     } else {
@@ -104,12 +106,12 @@ export default function Checkout({navigation}) {
       });
       if (resp.ok) {
         empty(false);
-        const text = await resp.text();
-        let data = JSON.parse(text);
-        setCartItems(data.content);
+        const text = await resp.json();
+        // let data = JSON.parse(text);
+        setCartItems(text.content);
         setProductPrice(
-          data.content.reduce((a, c) => {
-            return a + parseInt(c.dish.price) * parseInt(c.countOfDish);
+          text.content.reduce((a, c) => {
+            return a + parseFloat(c.dish.price) * parseFloat(c.countOfDish);
           }, 0),
         );
       } else {
@@ -124,71 +126,54 @@ export default function Checkout({navigation}) {
   async function checkOut() {
     if (note === '') {
       setNote('brak');
+    } else if (discountCode === '') {
+      setDiscountCode('brak');
     }
     if (await checkIfLogged()) {
       setRefreshing(true);
       const date = new Date();
       let dirs = RNFetchBlob.fs.dirs;
+
       const url =
         'http://10.0.2.2:8082/' +
         getUserName(store.getState().token) +
-        '/usercart/checkout/' +
-        note.replaceAll(' ', '_').replaceAll('\n', '_') +
-        '/' +
-        delivery;
+        '/usercart/checkout';
+
       console.log(url);
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Receipt needs to be saved on your device',
-          message:
-            'Receipt needs to be saved on your device if you dont want to save it on your device it will also be send on your email',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted) {
-        if (Platform.OS === 'android') {
-          RNFetchBlob.config({
-            fileCache: false,
-            addAndroidDownloads: {
-              useDownloadManager: true,
-              notification: true,
-              mime: 'application/pdf',
-              title:
-                'Receipt from ' +
-                date.getDate() +
-                '-' +
-                (date.getMonth() + 1) +
-                '-' +
-                date.getFullYear(),
-              description: 'Receipt for order in Szama(n)',
-              path: dirs.DownloadDir + 'Receipt.pdf',
-            },
-          })
-            .fetch('get', url, {
-              Authorization: 'Bearer ' + store.getState().token,
-              'Cache-Control': 'no-store',
-            })
-            .then(res => {
-              setRefreshing(false);
-              onRefresh();
-              setProductPrice(0);
-              empty(true);
-            })
-            .catch((errorMessage, statusCode) => {
-              console.error(errorMessage, statusCode);
-            });
-        }
-      } else {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: new Headers({
+          Authorization: 'Bearer ' + store.getState().token,
+          'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify({
+          discountCode: '' + discountCode,
+          note: '' + note,
+          delivery: '' + delivery,
+        }),
+      });
+
+      if (res.ok) {
         showMessage({
           message: 'Twoja Recepta została wysłana na email.',
           type: 'info',
           backgroundColor: COLORS.second,
           color: COLORS.main,
         });
+      } else {
+        const message = await JSON.parse(await res.text()).message;
+        showMessage({
+          message: '' + message,
+          type: 'info',
+          backgroundColor: COLORS.second,
+          color: COLORS.main,
+        });
       }
+      setRefreshing(false);
+      onRefresh();
+      setProductPrice(0);
+      setDiscount(0);
+      empty(true);
     } else {
       LogOut(navigation, store.dispatch);
       showMessage({
@@ -268,6 +253,34 @@ export default function Checkout({navigation}) {
     }
   }
 
+  function getDiscount() {
+    fetch('http://10.0.2.2:8082' + '/discounts/unlockDiscount', {
+      method: 'Post',
+      headers: new Headers({
+        Authorization: 'Bearer ' + store.getState().token,
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({
+        unlockCode: '' + discountCode,
+        userLogin: getUserName(store.getState().token),
+      }),
+    })
+      .then(async response => {
+        let text = await response.text();
+        let json = await JSON.parse(text);
+        console.log(json.savedMoney);
+        if (cartItems.find(item => item.dish.name === json.name)) {
+          setDiscount(parseFloat(json.savedMoney));
+        }
+      })
+      .catch(error => {
+        NetInfo.fetch().then(state => {
+          state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
+        });
+      });
+    return undefined;
+  }
+
   return isEmpty ? (
     <View style={styles.container}>
       <Text style={styles.emptyText}>Brak dań.</Text>
@@ -297,7 +310,10 @@ export default function Checkout({navigation}) {
                     <View style={styles.innerColumn}>
                       <Text style={styles.title}>{item.dish.name}</Text>
                       <Text style={styles.sumText}>
-                        {parseInt(item.countOfDish) * parseInt(item.dish.price)}
+                        {(
+                          parseInt(item.countOfDish) *
+                          parseFloat(item.dish.price)
+                        ).toFixed(2)}
                         zl
                       </Text>
                     </View>
@@ -356,20 +372,46 @@ export default function Checkout({navigation}) {
                 onValueChange={newValue => setDelivery(newValue)}
               />
             </View>
+            <View style={[styles.card, styles.elevation]}>
+              <Text style={styles.infoText}>Kod Rabatowy?</Text>
+              <TextInput
+                style={styles.input}
+                value={discountCode}
+                multiline={false}
+                onChangeText={setDiscountCode}
+                placeholder="Informacje do zamówienia."
+                keyboardType="default"
+              />
+              <Button
+                buttonStyle={styles.buttonCode}
+                onPress={() => getDiscount()}
+                title="Sprawdź"
+              />
+            </View>
           </View>
+
           <View style={styles.row}>
             <View>
               <Text style={styles.priceText}>Razem: </Text>
               <Text style={styles.priceText}>Koszt dostawy: </Text>
+              {discount === 0 ? null : (
+                <Text style={styles.priceText}>Znizka: </Text>
+              )}
               <Text style={styles.totalText}>Suma: </Text>
             </View>
             <View style={styles.rightBox}>
-              <Text style={styles.priceText}>{productPrice}zl</Text>
+              <Text style={styles.priceText}>{productPrice.toFixed(2)}zl</Text>
               <Text style={styles.priceText}>
                 {delivery ? moneyForDelivery : 0}zl
               </Text>
+              {discount === 0 ? null : (
+                <Text style={styles.priceText}>{discount.toFixed(2)}zl</Text>
+              )}
               <Text style={styles.totalText}>
-                {delivery ? productPrice + moneyForDelivery : productPrice}zl
+                {delivery
+                  ? (productPrice - discount + moneyForDelivery).toFixed(2)
+                  : (productPrice - discount).toFixed(2)}
+                zl
               </Text>
             </View>
           </View>
@@ -534,6 +576,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 250,
     height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.second,
+  },
+  buttonCode: {
     borderRadius: 20,
     backgroundColor: COLORS.second,
   },
