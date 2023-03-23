@@ -1,20 +1,44 @@
 import SplashScreen from 'react-native-splash-screen';
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
 import loginReducer from './Components/Reducer';
 import {Provider as StoreProvider} from 'react-redux';
 import store from './Components/store';
 import Navigation from './Components/Navigation';
-import FlashMessage from 'react-native-flash-message';
+import FlashMessage, { showMessage } from "react-native-flash-message";
+import { checkIfServerActive } from "./Components/Utilities";
+import { COLORS } from "./Components/Colors";
+import { Text, View } from "react-native";
+import ServerInactive from "./Components/Screens/ServerInactive";
 
+const SERVER_ACTIVE = 'active';
+const SERVER_INACTIVE = 'inactive';
 function App() {
-  SplashScreen.hide();
-  return (
-    <StoreProvider store={store}>
-      <Navigation />
+    SplashScreen.hide();
+    let checkingInterval = 5000;
+    const checkServerStatus = async () => {
+      if (await checkIfServerActive()) {
+        console.log('serwer aktywny');
+      } else {
+        console.log('serwer nieaktywny');
+        showMessage({
+          message: 'Brak połączenia z serwerem',
+          type: 'info',
+          backgroundColor: COLORS.second,
+          color: COLORS.main,
+        })
+      }
+    };
+    useEffect(() => {
+      const intervalId = setInterval(checkServerStatus, checkingInterval);
+      return () => clearInterval(intervalId);
+    }, [])
+    return (
+      <StoreProvider store={store}>
+        <Navigation />
         <FlashMessage position="top" />
-    </StoreProvider>
-  );
-}
+      </StoreProvider>
+    );
+  }
 
 export default App;
