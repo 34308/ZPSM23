@@ -54,11 +54,11 @@ export async function checkIfLogged() {
 }
 
 export async function checkIfServerActive() {
-  const httpTimeout = 3000;
+  const httpTimeout = 1000;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), httpTimeout);
   try {
-    const response = await fetch('http://10.0.2.2:8082/activity', {signal: controller.signal})
+    const response = await fetch('https://projektbigdata.azurewebsites.net/activity', {signal: controller.signal})
     console.log(response)
     if (response.status === 200) {
       return true
