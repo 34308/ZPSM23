@@ -12,7 +12,7 @@ import {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../Colors';
 import NetInfo from '@react-native-community/netinfo';
-import {NOINTERNET, SERVER_ERROR} from '../actions';
+import {API_URL, NOINTERNET, SERVER_ERROR} from '../actions';
 
 export default function Registration({navigation}) {
   const [login, setLogin] = useState('');
@@ -85,7 +85,7 @@ export default function Registration({navigation}) {
 
   async function Register() {
     try {
-      fetch('http://10.0.2.2:8082/user/registration', {
+      fetch(API_URL+'/user/registration', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
