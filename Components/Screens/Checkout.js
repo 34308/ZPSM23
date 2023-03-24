@@ -201,6 +201,7 @@ export default function Checkout({navigation}) {
       },
     )
       .then(response => {
+
         if (!response.ok) {
           LogOut(navigation, store.dispatch);
           showMessage({
@@ -216,8 +217,6 @@ export default function Checkout({navigation}) {
           state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
         });
       });
-    const data = await resp.text();
-    console.log(data);
     onRefresh();
   }
   async function deleteItemFromCart(dishId) {
