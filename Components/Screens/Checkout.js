@@ -238,8 +238,6 @@ export default function Checkout({navigation}) {
         state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
       });
     });
-    const data = await resp.text();
-    console.log(data);
     onRefresh();
   }
   //Zabezpieczenie przed ujemną liczbą dań
@@ -593,6 +591,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
+    color:'black',
     marginLeft: 10,
   },
   inputMargin: {
