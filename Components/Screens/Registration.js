@@ -8,11 +8,12 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../Colors';
 import NetInfo from '@react-native-community/netinfo';
 import {API_URL, NOINTERNET, SERVER_ERROR} from '../actions';
+import {formatCardNumber, validateCardNumber} from 'creditcardutils'
 
 export default function Registration({navigation}) {
   const [login, setLogin] = useState('');
@@ -28,6 +29,7 @@ export default function Registration({navigation}) {
   const [emailCorrect, setEmailCorrect] = useState(true);
   const [expireMonth, setExpireMonth] = useState('');
   const [expireYear, setExpireYear] = useState('');
+  const [cardNumberParts, setCardNumberParts] = useState(['','','',''])
   //Przechodzi do login i czyści fieldy, ewentualnie do zmiany
   const GoToLogin = () => {
     navigation.navigate('Login');
@@ -130,16 +132,30 @@ export default function Registration({navigation}) {
     setEmailCorrect(reg.test(text));
   }
 
-  function formatExpireDate(cardExpiry = "") {
-    console.log(`w funckji do formatowania ${cardExpiry}` )
-    if((cardExpiry.length < 2 || cardExpiry.length > 2) && cardExpiry.length < 6){
-      return cardExpiry;
+  function formatCreditCardNumber(inputCardNumber){
+    function split(str, index) {
+      const result = [str.slice(0, index), str.slice(index)];
+      return result;
     }
-    else if(cardExpiry.length == 2){
-      return cardExpiry.substring(0, 2) + "/" + (cardExpiry.substring(2) || "")
-    } else {
-      return cardExpiry.substring(0, cardExpiry.length - 1);
+    console.log(inputCardNumber);
+    if(inputCardNumber.length === 4){
+      console.log(inputCardNumber + ' ');
+      setCardNumber(inputCardNumber + ' ');
     }
+    else {
+      if (inputCardNumber.charAt(inputCardNumber.length - 1) === ' ')
+        setCardNumber(inputCardNumber.slice(0, inputCardNumber.length -1));
+      setCardNumber(inputCardNumber);
+    }
+  }
+
+  function updateCardNumberParts(partValue, partNumber){
+    let cardNumberPartsCopy = [...cardNumberParts]
+    cardNumberPartsCopy[partNumber] = partValue;
+    setCardNumberParts(cardNumberPartsCopy);
+    let updatedCardNumber = cardNumberPartsCopy.join(' ');
+    setCardNumber(updatedCardNumber);
+    console.log(updatedCardNumber);
   }
 
   return (
@@ -216,12 +232,55 @@ export default function Registration({navigation}) {
                   style={styles.input}
                 />
                 <Text style={styles.textInput}>Numer karty</Text>
-                <TextInput
-                  value={cardNumber}
-                  // placeholder="Card Number"
-                  onChangeText={setCardNumber}
-                  style={styles.input}
-                />
+                <View style={{flexDirection: 'row'}}>
+                    <TextInput
+                      value={cardNumberParts[0]}
+                      // placeholder="Card Number"
+                      onChangeText={(text) => {
+                        updateCardNumberParts(text, 0);
+                        if (text.length === 4) this.secondCardPart.focus();
+                      }}
+                      style={styles.smallInput}
+                      maxLength={4}
+                      keyboardType={'numeric'}
+                    />
+                  <TextInput
+                    ref={(input) => { this.secondCardPart = input; }}
+                    value={cardNumberParts[1]}
+                    // placeholder="Card Number"
+                    onChangeText={(text) => {
+                      updateCardNumberParts(text, 1);
+                      if (text.length === 4) this.thirdCardPart.focus();
+                    }}
+                    style={styles.smallInput}
+                    maxLength={4}
+                    keyboardType={'numeric'}
+                  />
+                  <TextInput
+                    ref={(input) => { this.thirdCardPart = input; }}
+                    value={cardNumberParts[2]}
+                    // placeholder="Card Number"
+                    onChangeText={(text) => {
+                      updateCardNumberParts(text, 2);
+                      if (text.length === 4) this.fourthCardPart.focus();
+                    }}
+                    style={styles.smallInput}
+                    maxLength={4}
+                    keyboardType={'numeric'}
+                    />
+                  <TextInput
+                    ref={(input) => { this.fourthCardPart = input; }}
+                    value={cardNumberParts[3]}
+                    // placeholder="Card Number"
+                    onChangeText={(text) => updateCardNumberParts(text, 3)}
+                    style={styles.smallInput}
+                    maxLength={4}
+                    keyboardType={'numeric'}
+                  />
+                </View>
+                {validateCardNumber(cardNumber) === false &&
+                  <Text style={styles.wrongMail}>Nieprawidłowy numer karty</Text>
+                }
                 <Text style={styles.textInput}>Data wygaśnięcia</Text>
                 <View style={{flexDirection: 'row'}}>
                   <TextInput
