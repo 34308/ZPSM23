@@ -26,6 +26,7 @@ export default function Registration({navigation}) {
   const [cvv, setCvv] = useState('');
   const [exDate, setexDate] = useState('');
   const [pageChanged, changePage] = useState(false);
+  const [emailCorrect, setEmailCorrect] = useState(true);
   //Przechodzi do login i czyści fieldy, ewentualnie do zmiany
   const GoToLogin = () => {
     navigation.navigate('Login');
@@ -119,6 +120,13 @@ export default function Registration({navigation}) {
     }
   }
 
+  function ValidateEmail(text) {
+    console.log(text);
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    setEmail(text);
+    setEmailCorrect(reg.test(text));
+  }
+
   return (
     <ScrollView>
       <View>
@@ -162,9 +170,12 @@ export default function Registration({navigation}) {
                 <TextInput
                   value={email}
                   // placeholder="Email"
-                  onChangeText={setEmail}
+                  onChangeText={ValidateEmail}
                   style={styles.input}
                 />
+                {emailCorrect === false &&
+                  <Text style={styles.wrongMail}>Nieprawidłowy Email</Text>
+                }
               </View>
               <View>
                 <Text style={styles.textInput}>Imię</Text>
@@ -341,4 +352,7 @@ const styles = StyleSheet.create({
     marginTop: -10,
     marginBottom: 20,
   },
+  wrongMail: {
+    color: 'red'
+  }
 });
