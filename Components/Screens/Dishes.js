@@ -103,7 +103,7 @@ export default function Dishes({navigation}) {
         </View>
         {dishes
           .filter(function (dish) {
-            return dish.name.toLowerCase().includes(phrase);
+            return dish.name.toLowerCase().includes(phrase.toLowerCase());
           })
           .map((item, i) => {
             return (
