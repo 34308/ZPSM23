@@ -248,7 +248,9 @@ export default function Registration({navigation}) {
                   value={cvv}
                   // placeholder="Cvv"
                   onChangeText={setCvv}
-                  style={styles.input}
+                  keyboardType={'numeric'}
+                  maxLength={3}
+                  style={styles.smallInput}
                 />
               </View>
               <TouchableOpacity style={styles.button} onPress={ValidateFields}>
@@ -366,12 +368,11 @@ const styles = StyleSheet.create({
   },
   smallInput: {
     padding: 5,
-    paddingLeft: 15,
     marginBottom: 10,
     borderBottomWidth: 2,
     borderRadius: 5,
     borderColor: COLORS.second,
-    textAlign: 'left',
+    textAlign: 'center',
     color: COLORS.second,
     width: 50,
   },
