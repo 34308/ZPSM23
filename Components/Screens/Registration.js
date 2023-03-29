@@ -77,6 +77,10 @@ export default function Registration({navigation}) {
       alert('Hasło musi zawierać min. 8 znaków i max. 20');
     } else if (passwordRepeat != password) {
       alert('Hasła się nie zgadzają.');
+    }else if (validateCardCVC(cvv) || validateCardExpiry(expireMonth, expireYear) || validateCardNumber(cardNumber)) {
+      alert('Błędne dane na karcie!')
+    } else if (emailCorrect){
+      alert('Niepoprawny email!')
     } else {
       try {
         Register();
@@ -131,24 +135,6 @@ export default function Registration({navigation}) {
     setEmail(text);
     setEmailCorrect(reg.test(text));
   }
-
-  function formatCreditCardNumber(inputCardNumber){
-    function split(str, index) {
-      const result = [str.slice(0, index), str.slice(index)];
-      return result;
-    }
-    console.log(inputCardNumber);
-    if(inputCardNumber.length === 4){
-      console.log(inputCardNumber + ' ');
-      setCardNumber(inputCardNumber + ' ');
-    }
-    else {
-      if (inputCardNumber.charAt(inputCardNumber.length - 1) === ' ')
-        setCardNumber(inputCardNumber.slice(0, inputCardNumber.length -1));
-      setCardNumber(inputCardNumber);
-    }
-  }
-
   function updateCardNumberParts(partValue, partNumber){
     let cardNumberPartsCopy = [...cardNumberParts]
     cardNumberPartsCopy[partNumber] = partValue;
