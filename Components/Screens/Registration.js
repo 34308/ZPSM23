@@ -24,9 +24,10 @@ export default function Registration({navigation}) {
   const [email, setEmail] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cvv, setCvv] = useState('');
-  const [exDate, setexDate] = useState('');
   const [pageChanged, changePage] = useState(false);
   const [emailCorrect, setEmailCorrect] = useState(true);
+  const [expireMonth, setExpireMonth] = useState('');
+  const [expireYear, setExpireYear] = useState('');
   //Przechodzi do login i czyści fieldy, ewentualnie do zmiany
   const GoToLogin = () => {
     navigation.navigate('Login');
@@ -39,7 +40,8 @@ export default function Registration({navigation}) {
     setEmail('');
     setCardNumber('');
     setCvv('');
-    setexDate('');
+    setExpireMonth('');
+    setExpireYear('');
   };
 
   //Waliduje poprawność wprowadzanych danych oraz sprawdza czy wymagane dane zostały wprowadzone
@@ -55,7 +57,6 @@ export default function Registration({navigation}) {
       email == '' ||
       cardNumber == '' ||
       cvv == '' ||
-      exDate == '' ||
       login == null ||
       password == null ||
       passwordRepeat == null ||
@@ -66,7 +67,8 @@ export default function Registration({navigation}) {
       email == null ||
       cardNumber == null ||
       cvv == null ||
-      exDate == null
+      expireMonth == null ||
+      expireYear == null
     ) {
       alert('Uzupełnij wszystkie pola.');
     } else if (password.length < 8 || password.length > 20) {
@@ -86,6 +88,7 @@ export default function Registration({navigation}) {
 
   async function Register() {
     try {
+      let expireDate = `${expireMonth}/${expireYear}`;
       fetch(API_URL+'/user/registration', {
         method: 'POST',
         headers: {
@@ -99,7 +102,7 @@ export default function Registration({navigation}) {
           surname: surname.toString(),
           address: address.toString(),
           debitCardNumber: cardNumber.toString(),
-          expireDate: exDate.toString(),
+          expireDate: expireDate,
           cvv: cvv.toString(),
           email: email.toString(),
         }),
@@ -125,6 +128,18 @@ export default function Registration({navigation}) {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     setEmail(text);
     setEmailCorrect(reg.test(text));
+  }
+
+  function formatExpireDate(cardExpiry = "") {
+    console.log(`w funckji do formatowania ${cardExpiry}` )
+    if((cardExpiry.length < 2 || cardExpiry.length > 2) && cardExpiry.length < 6){
+      return cardExpiry;
+    }
+    else if(cardExpiry.length == 2){
+      return cardExpiry.substring(0, 2) + "/" + (cardExpiry.substring(2) || "")
+    } else {
+      return cardExpiry.substring(0, cardExpiry.length - 1);
+    }
   }
 
   return (
@@ -208,12 +223,26 @@ export default function Registration({navigation}) {
                   style={styles.input}
                 />
                 <Text style={styles.textInput}>Data wygaśnięcia</Text>
-                <TextInput
-                  defaultValue={exDate}
-                  // placeholder="Expire Date"
-                  onChangeText={setexDate}
-                  style={styles.input}
-                />
+                <View style={{flexDirection: 'row'}}>
+                  <TextInput
+                    maxLength={2}
+                    style={styles.smallInput}
+                    onChangeText={(month) => {
+                      setExpireMonth(month);
+                      if (month.length == 2) this.secondTextInput.focus()
+                    }}
+                    blurOnSubmit={false}
+                    keyboardType={'numeric'}
+                  />
+                  <Text style={{marginTop: 10, fontSize: 15, color: COLORS.second}}>/</Text>
+                  <TextInput
+                    ref={(input) => { this.secondTextInput = input; }}
+                    maxLength={2}
+                    style={styles.smallInput}
+                    onChangeText={setExpireYear}
+                    keyboardType={'numeric'}
+                  />
+                </View>
                 <Text style={styles.textInput}>Kod cvv</Text>
                 <TextInput
                   value={cvv}
@@ -334,6 +363,17 @@ const styles = StyleSheet.create({
     borderColor: COLORS.second,
     textAlign: 'left',
     color: COLORS.second,
+  },
+  smallInput: {
+    padding: 5,
+    paddingLeft: 15,
+    marginBottom: 10,
+    borderBottomWidth: 2,
+    borderRadius: 5,
+    borderColor: COLORS.second,
+    textAlign: 'left',
+    color: COLORS.second,
+    width: 50,
   },
   logo: {
     justifyContent: 'center',
