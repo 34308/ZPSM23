@@ -13,7 +13,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS} from '../Colors';
 import NetInfo from '@react-native-community/netinfo';
 import {API_URL, NOINTERNET, SERVER_ERROR} from '../actions';
-import {formatCardNumber, validateCardNumber} from 'creditcardutils'
+import {validateCardNumber, validateCardExpiry, validateCardCVC} from 'creditcardutils'
 
 export default function Registration({navigation}) {
   const [login, setLogin] = useState('');
@@ -302,6 +302,9 @@ export default function Registration({navigation}) {
                     keyboardType={'numeric'}
                   />
                 </View>
+                {validateCardExpiry(expireMonth, expireYear) === false &&
+                  <Text style={styles.wrongMail}>Nieprawidłowa data wygaśnięcia</Text>
+                }
                 <Text style={styles.textInput}>Kod cvv</Text>
                 <TextInput
                   value={cvv}
@@ -311,6 +314,9 @@ export default function Registration({navigation}) {
                   maxLength={3}
                   style={styles.smallInput}
                 />
+                {validateCardCVC(cvv) === false &&
+                  <Text style={styles.wrongMail}>Nieprawidłowa data wygaśnięcia</Text>
+                }
               </View>
               <TouchableOpacity style={styles.button} onPress={ValidateFields}>
                 <Text style={styles.text}>Zarejestruj się</Text>
