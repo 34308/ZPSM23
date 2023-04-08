@@ -75,11 +75,11 @@ export default function Registration({navigation}) {
       alert('Uzupełnij wszystkie pola.');
     } else if (password.length < 8 || password.length > 20) {
       alert('Hasło musi zawierać min. 8 znaków i max. 20');
-    } else if (passwordRepeat != password) {
+    } else if (passwordRepeat !== password) {
       alert('Hasła się nie zgadzają.');
-    }else if (validateCardCVC(cvv) || validateCardExpiry(expireMonth, expireYear) || validateCardNumber(cardNumber)) {
+    }else if (!validateCardCVC(cvv) || !validateCardExpiry(expireMonth, expireYear) || !validateCardNumber(cardNumber)) {
       alert('Błędne dane na karcie!')
-    } else if (emailCorrect){
+    } else if (!emailCorrect){
       alert('Niepoprawny email!')
     } else {
       try {
