@@ -30,7 +30,12 @@ export default function Login({navigation}) {
 
   const ValidateFields = async () => {
     if (login === '' || password === '' || login == null || password == null) {
-      alert('Uzupełnij wszystkie pola.');
+      showMessage({
+        message: 'Uzupełnij wszystkie pola.',
+        type: 'warning',
+        backgroundColor: COLORS.second,
+        color: COLORS.main,
+      });
     } else {
       try {
         logIn();
@@ -76,7 +81,12 @@ export default function Login({navigation}) {
             dispatch({type: LOGIN, payload: '' + token});
             goToRestaurants();
           } else {
-            alert('Login Not Succesfull, wrong login or password');
+            showMessage({
+              message: 'Logowanie nie powiodło się. Niepoprawny login, albo hasło',
+              type: 'warning',
+              backgroundColor: COLORS.second,
+              color: COLORS.main,
+            });
           }
         })
         .catch(error => {
