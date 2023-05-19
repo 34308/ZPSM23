@@ -139,8 +139,8 @@ export default function Dish({navigation}) {
             state.isConnected ? alert(SERVER_ERROR + error) : alert(NOINTERNET);
           });
         });
-      const data = await resp.text();
-      onRefresh();
+
+      await onRefresh();
       showMessage({
         message: 'Dodano do koszyka.',
         type: 'info',

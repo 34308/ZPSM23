@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {getUserName, LogOut} from '../Utilities';
 import store from '../store';
 import NetInfo from '@react-native-community/netinfo';
-import { API_URL, NOINTERNET, SERVER_ERROR } from "../actions";
+import {API_URL, NOINTERNET, SERVER_ERROR} from '../actions';
 
 export default function Settings({navigation}) {
   function deleteAccount() {
@@ -49,13 +49,15 @@ export default function Settings({navigation}) {
   }
 
   function goToEditScreen() {
-    navigation.navigate("EditScreen");
+    navigation.navigate('EditScreen');
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <TouchableOpacity onPress={()=>goToEditScreen()} style={styles.borderBox}>
+        <TouchableOpacity
+          onPress={() => goToEditScreen()}
+          style={styles.borderBox}>
           <View style={styles.row}>
             <Icon name="user" style={styles.iconLeft} />
             <Text style={styles.text}>Edytuj profil</Text>
